@@ -45,11 +45,18 @@ public class Vista_principalController implements Initializable {
     String nombre;
     String rol;
     String user;   
+    float cambio;
     
 
     @FXML
     void Cambio(ActionEvent event) {
-        
+        person.setCambio(Float.parseFloat(Cambio_caja.getText()));
+        Cambio.setDisable(true);
+        Alert dialogAlert2 = new Alert(Alert.AlertType.INFORMATION);
+        dialogAlert2.setTitle("Informe");
+        dialogAlert2.setContentText("Se agrego dinero a la caja");
+        dialogAlert2.initStyle(StageStyle.UTILITY);
+        dialogAlert2.showAndWait();
     }
 
     @FXML
@@ -135,17 +142,29 @@ public class Vista_principalController implements Initializable {
         dialogAlert2.setContentText("Esta saliendo de la aplciación");
         dialogAlert2.initStyle(StageStyle.UTILITY);
         dialogAlert2.showAndWait();
+        System.exit(0);
     }
 
     public void informacion(Person_system person){                
         this.person = person;
         this.nombre = person.getNombre();
         this.rol = person.getRol();
+        this.cambio = person.getCambio();
         Name.setText(person.getNombre());
         Rol.setText(person.getRol());         
         if(rol.equals("Admin")){            
         }else{
             Usuarios.setVisible(false);
+        }
+        if(cambio <= 50){
+            Alert dialogAlert2 = new Alert(Alert.AlertType.WARNING);
+            dialogAlert2.setTitle("Advertencia");
+            dialogAlert2.setContentText("No hay cambio en la caja");
+            dialogAlert2.initStyle(StageStyle.UTILITY);
+            dialogAlert2.showAndWait();
+        }else {
+            Cambio.setDisable(true);
+            Cambio_caja.setText(String.valueOf(cambio));
         }
     }
     

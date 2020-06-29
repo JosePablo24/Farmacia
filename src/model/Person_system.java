@@ -11,7 +11,7 @@ package model;
  */
 public class Person_system {
     public String user;
-    public int cambio;
+    public float cambio;
     public String rol;
     public String Nombre;
     
@@ -40,11 +40,11 @@ public class Person_system {
         System.out.println(user);
     }
 
-    public int getCambio() {
+    public float getCambio() {
         return cambio;
     }
 
-    public void setCambio(int cambio) {
+    public void setCambio(float cambio) {
         this.cambio = cambio;
     }
 
