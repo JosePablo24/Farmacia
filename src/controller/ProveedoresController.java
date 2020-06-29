@@ -8,6 +8,7 @@ package controller;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
+import model.Person_system;
 
 /**
  * FXML Controller class
@@ -19,9 +20,16 @@ public class ProveedoresController implements Initializable {
     /**
      * Initializes the controller class.
      */
+    
+    Person_system person;
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
     }    
+    
+    public void informacion(Person_system person){                
+        this.person = person;
+    }
     
 }

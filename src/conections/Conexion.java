@@ -13,11 +13,11 @@ import javax.swing.JOptionPane;
  * @author Jose Pablo Sandoval
  */
 public class Conexion {
- private static Connection conectar = null;
+    Connection conectar = null;
     public Connection conexion(){        
         try{
-            Class.forName("com.mysql.jdbc.Driver").newInstance();
-            conectar = DriverManager.getConnection("jdbc:mysql://localhost:3306/adonis","root","monopoli");
+            Class.forName("com.mysql.jdbc.Driver");
+            conectar = DriverManager.getConnection("jdbc:mysql://localhost/farmacia","root","");
             System.out.println("conectado");
             //JOptionPane.showMessageDialog(null,"conectado");
         }catch(Exception e){

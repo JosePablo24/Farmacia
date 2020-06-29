@@ -1,32 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ButtonBar?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="704.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1" fx:controller="controller.Vista_principalController">
+<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.Vista_principalController">
    <children>
-      <TableView layoutX="37.0" layoutY="213.0" prefHeight="157.0" prefWidth="367.0">
+      <TableView layoutX="45.0" layoutY="360.0" prefHeight="195.0" prefWidth="475.0">
         <columns>
           <TableColumn prefWidth="75.0" text="C1" />
           <TableColumn prefWidth="75.0" text="C2" />
         </columns>
       </TableView>
-      <TextField editable="false" layoutX="528.0" layoutY="38.0" />
-      <Label layoutX="528.0" layoutY="14.0" prefHeight="17.0" prefWidth="149.0" text="Fecha" />
-      <ButtonBar layoutX="37.0" layoutY="31.0" prefHeight="40.0" prefWidth="407.0">
-        <buttons>
-          <Button mnemonicParsing="false" text="Button" />
-            <Button mnemonicParsing="false" text="Button" />
-            <Button mnemonicParsing="false" text="Button" />
-            <Button mnemonicParsing="false" text="Button" />
-            <Button mnemonicParsing="false" text="Button" />
-        </buttons>
-      </ButtonBar>
+      <Label layoutX="941.0" layoutY="513.0" prefHeight="17.0" prefWidth="149.0" text="Fecha" />
+      <Label fx:id="DateTime" layoutX="941.0" layoutY="538.0" prefHeight="17.0" prefWidth="208.0" />
+      <Label layoutX="45.0" layoutY="23.0" prefHeight="17.0" prefWidth="57.0" text="Nombre" />
+      <Label fx:id="Name" layoutX="116.0" layoutY="23.0" prefHeight="18.0" prefWidth="191.0" />
+      <Label layoutX="323.0" layoutY="23.0" prefHeight="17.0" prefWidth="34.0" text="Rol" />
+      <Label fx:id="Rol" layoutX="374.0" layoutY="23.0" prefHeight="17.0" prefWidth="104.0" />
+      <Button layoutX="1049.0" layoutY="19.0" mnemonicParsing="false" onAction="#out" prefHeight="30.0" prefWidth="87.0" style="-fx-background-color: 'red'; -fx-background-radius: 20;" text="Salir" textFill="WHITE" />
+      <Button fx:id="Productos" layoutX="45.0" layoutY="95.0" mnemonicParsing="false" onAction="#Productos" prefHeight="30.0" prefWidth="104.0" style="-fx-background-color: #1F8FE8;" text="Productos" textFill="WHITE" />
+      <Button fx:id="Usuarios" layoutX="45.0" layoutY="253.0" mnemonicParsing="false" onAction="#Usuarios" prefHeight="32.0" prefWidth="104.0" style="-fx-background-color: #1F8FE8;" text="Usuarios" textFill="WHITE" />
+      <Button fx:id="Provedores" layoutX="45.0" layoutY="201.0" mnemonicParsing="false" onAction="#Proveedores" prefHeight="32.0" prefWidth="104.0" style="-fx-background-color: #1F8FE8;" text="Proveedores" textFill="WHITE" />
+      <Button fx:id="Ventas" layoutX="45.0" layoutY="146.0" mnemonicParsing="false" onAction="#Ventas" prefHeight="32.0" prefWidth="104.0" style="-fx-background-color: #1F8FE8;" text="Ventas" textFill="WHITE" />
+      <Button fx:id="Corte" layoutX="219.0" layoutY="94.0" mnemonicParsing="false" onAction="#Corte_caja" prefHeight="32.0" prefWidth="104.0" style="-fx-background-color: #1F8FE8;" text="Corte de caja" textFill="WHITE" />
+      <Button fx:id="Cambio" layoutX="566.0" layoutY="16.0" mnemonicParsing="false" onAction="#Cambio" prefHeight="30.0" prefWidth="119.0" style="-fx-background-color: #1F8FE8;" text="Cambio de caja" textFill="WHITE" />
+      <TextField fx:id="Cambio_caja" layoutX="730.0" layoutY="19.0" prefHeight="26.0" prefWidth="177.0" promptText="Cambio en caja" />
    </children>
 </AnchorPane>

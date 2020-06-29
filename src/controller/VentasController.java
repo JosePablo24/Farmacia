@@ -15,20 +15,20 @@ import model.Person_system;
  *
  * @author Jose Pablo Sandoval
  */
-public class ProductosController implements Initializable {
+public class VentasController implements Initializable {
 
     /**
      * Initializes the controller class.
      */
+    
     Person_system person;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-    }
+    }    
     
     public void informacion(Person_system person){                
         this.person = person;
     }
-    
 }
