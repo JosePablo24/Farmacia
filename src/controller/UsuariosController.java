@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,6 +22,8 @@ import java.util.regex.Pattern;
 import conections.Conexion;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -37,6 +40,9 @@ import model.Person_system;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+
+import java.util.ArrayList;
+
 
 /**
  * FXML Controller class
@@ -84,32 +90,35 @@ public class UsuariosController implements Initializable {
     private TableView<Person_system> tableUsers;
     
     @FXML
-    private TableColumn value0;
-
-    @FXML
-    private TableColumn value1;
-
-    @FXML
-    private TableColumn value2;
-
-    @FXML
-    private TableColumn value3;
-
-    @FXML
-    private TableColumn value4;
-
-    @FXML
-    private TableColumn value5;
-
-    @FXML
-    private TableColumn value6;
-
-    @FXML
-    private TableColumn value7;
+    private TableColumn<?,?> value0;
     
+    @FXML
+    private TableColumn<?,?>  value1;
+
+    @FXML
+    private TableColumn<?,?> value2;
+
+    @FXML
+    private TableColumn<?,?>  value3;
+
+    @FXML
+    private TableColumn<?,?>  value4;
+
+    @FXML
+    private TableColumn<?,?>  value5;
+
+    @FXML
+    private TableColumn<?,?>  value6;
+
+    @FXML
+    private TableColumn<?,?>  value7;
     
+
+    @FXML
+    private TextField search;
     
     private ObservableList listaUsuarios = FXCollections.observableArrayList();
+    
     @FXML
     public void initialize(URL url, ResourceBundle rb) {
     	mostrarUsuarios();
@@ -139,7 +148,7 @@ public class UsuariosController implements Initializable {
 	String name;
 	String apPat;
 	String apMat;
-	String year;
+	int year;
 	String sex;
 	String username;
 	String pass;
@@ -164,9 +173,9 @@ public class UsuariosController implements Initializable {
                             id = rs.getInt(1);
                             name = rs.getString(2);
                             apPat = rs.getString(3);
-                            apMat = rs.getString(3);
-                            year = rs.getString(4);
-                            sex = rs.getString(5);
+                            apMat = rs.getString(4);
+                            year = rs.getInt(5);
+                            sex = rs.getString(6);
                             band = true;
                         }
                         if(band=true) {
@@ -214,9 +223,10 @@ public class UsuariosController implements Initializable {
     
     }
     
-    public void mostrarUsuarios() {
+    @SuppressWarnings("unchecked")
+	public void mostrarUsuarios() {
+    	listaUsuarios.clear();
     	try {
-        	listaUsuarios.clear();	
         	String sql = "SELECT Login.id, Login.User, Nombre, Apellido_paterno, Apellido_materno, Edad, Sexo, Rol FROM Usuarios INNER JOIN Login ON Usuarios.id = Login.Usuarios_id";
         	Statement st = cn.createStatement();
             ResultSet rs = st.executeQuery(sql);
@@ -227,38 +237,75 @@ public class UsuariosController implements Initializable {
                 name = rs.getString(3);
                 apPat = rs.getString(4);
                 apMat = rs.getString(5);
-                year = rs.getString(6);
+                year = rs.getInt(6);
                 sex = rs.getString(7);
                 rl = rs.getString(8);
-                System.out.println(year+sex);
-                Person_system person = new Person_system(id,username,name,apPat,apMat,year,sex,rl);
-                listaUsuarios.addAll(person);
+                listaUsuarios.addAll(new Person_system(id,username,name,apPat,apMat,year,sex,rl));
             }
+            tableUsers.setColumnResizePolicy(tableUsers.CONSTRAINED_RESIZE_POLICY);
+
+            TableColumn<Person_system, Number> value0 = new TableColumn<>("Id");
+            value0.setCellValueFactory(c -> c.getValue().getId());
+
+            TableColumn<Person_system, String> value1 = new TableColumn<>("Usuario");
+            value1.setCellValueFactory(c -> c.getValue().getUsuario());
+
+            TableColumn<Person_system, String> value2 = new TableColumn<>("Nombre");
+            value2.setCellValueFactory(c -> c.getValue().getNameProperty());
+
+            TableColumn<Person_system, String> value3 = new TableColumn<>("Apellido Paterno");
+            value3.setCellValueFactory(c -> c.getValue().getApellidoPaterno());
             
-            value0.setCellValueFactory(
-                    new PropertyValueFactory<Person_system, String>("id"));
-            value1.setCellValueFactory(
-                    new PropertyValueFactory<Person_system, String>("user"));
-            value2.setCellValueFactory(
-                    new PropertyValueFactory<Person_system, String>("Nombre"));
-            value3.setCellValueFactory(
-                    new PropertyValueFactory<Person_system, String>("apellidoPaterno"));
-            value4.setCellValueFactory(
-                    new PropertyValueFactory<Person_system, String>("apellidoMaterno"));
-            value5.setCellValueFactory(
-                    new PropertyValueFactory<Person_system, String>("edad"));
-            value6.setCellValueFactory(
-                    new PropertyValueFactory<Person_system, String>("sexo"));
-            value7.setCellValueFactory(
-                    new PropertyValueFactory<Person_system, String>("rol"));
-			tableUsers.setItems(listaUsuarios);
-			tableUsers.getItems();
+            TableColumn<Person_system, String> value4 = new TableColumn<>("Apellido Materno");
+            value4.setCellValueFactory(c -> c.getValue().getApellidoMaterno());
+            
+            TableColumn<Person_system, Number> value5 = new TableColumn<>("Edad");
+            value5.setCellValueFactory(c -> c.getValue().getEdad());
+            
+            TableColumn<Person_system, String> value6 = new TableColumn<>("Sexo");
+            value6.setCellValueFactory(c -> c.getValue().getSexo());
+            
+            TableColumn<Person_system, String> value7 = new TableColumn<>("Rol");
+            value7.setCellValueFactory(c -> c.getValue().getRole());
+           
+            
+            tableUsers.getColumns().clear();
+            tableUsers.getColumns().add(value0);
+            tableUsers.getColumns().add(value1);
+            tableUsers.getColumns().add(value2);
+            tableUsers.getColumns().add(value3);
+            tableUsers.getColumns().add(value4);
+            tableUsers.getColumns().add(value5);
+            tableUsers.getColumns().add(value6);
+            tableUsers.getColumns().add(value7);
+            
+            
+	        FilteredList<Person_system> filteredData = new FilteredList<>(listaUsuarios, p -> true);
+
+	        SortedList<Person_system> sortedData = new SortedList<>(filteredData);
+	        sortedData.comparatorProperty().bind(tableUsers.comparatorProperty());
+
+	        tableUsers.setItems(sortedData);
+	        
+	        search.textProperty().addListener((prop, old, text) -> {
+	            System.out.println("Hekko");
+	            filteredData.setPredicate(person -> {
+	                if (text == null || text.isEmpty()) {
+	                    return true;
+	                }
+
+	                System.out.println("Hekko");
+	                String name = person.getName().toLowerCase();
+	                return name.contains(text.toLowerCase());
+	            });
+	        });
             
 		} catch (Exception e) {
 			System.err.println("\nMe llevo la ");
             Logger.getLogger(UsuariosController.class.getName()).log(Level.SEVERE, null, e); 
 		}
     }
+    
     
     public void clearInformation() {
     	nombre.clear();
