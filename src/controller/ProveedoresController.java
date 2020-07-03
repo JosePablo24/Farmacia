@@ -39,7 +39,10 @@ import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.util.Callback;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.control.TablePosition;
+import javafx.scene.control.TableView.TableViewSelectionModel;
 
 /**
  * FXML Controller class
@@ -97,12 +100,69 @@ public class ProveedoresController implements Initializable {
     
     @FXML
     void OnMouseClickedEditar(MouseEvent event) {
+        if(verIdProv.getText().equals("") || verNombreProv.getText().equals("") || verRFCProv.getText().equals("") || verTelefonoProv.getText().equals("")){
+            Alert dialogAlert2 = new Alert(Alert.AlertType.WARNING);
+            dialogAlert2.setTitle("Advertencia");
+            dialogAlert2.setContentText("Debe seleccionar un elemento de la lista");
+            dialogAlert2.initStyle(StageStyle.UTILITY);
+            dialogAlert2.showAndWait();
+        }else{
+            int id =Integer.parseInt(verIdProv.getText());
+            String nombre = verNombreProv.getText();
+            String telefono = verTelefonoProv.getText();
+            String rfc = verRFCProv.getText();
+            String query = " UPDATE proveedores (id, Nombre, Rfc, Telefono)" +" Values (?, ?, ?)";
+            //st.execute("UPDATE ciudades SET id = '"+id+"' where idciudad ="+idCiudad);
+            
+            try {
+                PreparedStatement preparedStmt = cn.prepareStatement("UPDATE Messages SET Nombre = ?, Rfc = ?, Telefono = ?  WHERE id = ?");
 
+                preparedStmt.setString (1, nombre);
+                preparedStmt.setString (2, rfc);
+                preparedStmt.setString(3, telefono);
+                preparedStmt.setInt(4, id);
+                preparedStmt.executeUpdate();
+                
+                
+                Alert dialogAlert2 = new Alert(Alert.AlertType.CONFIRMATION);
+                dialogAlert2.setTitle("Exito");
+                dialogAlert2.setContentText("Se guardo con exito");
+                dialogAlert2.initStyle(StageStyle.UTILITY);
+                dialogAlert2.showAndWait();
+                
+            } catch (SQLException e) {
+                System.err.println("\nError!... No se pudo realizar la sentencia");
+                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, e);            
+            }finally{
+                visualizateData();
+            }
+        }
     }
 
     @FXML
     void OnMouseClickedEliminar(MouseEvent event) {
-
+        if(verIdProv.getText().equals("") ){
+            Alert dialogAlert2 = new Alert(Alert.AlertType.WARNING);
+            dialogAlert2.setTitle("Advertencia");
+            dialogAlert2.setContentText("Debe seleccionar un elemento de la lista");
+            dialogAlert2.initStyle(StageStyle.UTILITY);
+            dialogAlert2.showAndWait();
+        }else{
+            int id =Integer.parseInt(verIdProv.getText());
+            
+            try {
+                String query = "DELETE FROM proveedores where id = ?";
+                PreparedStatement preparedStmt = cn.prepareStatement(query);
+                preparedStmt.setInt(1, id);
+                preparedStmt.execute();
+      
+                cn.close();
+                visualizateData();
+            } catch (Exception e) {
+                System.err.println("\nError!... No se pudo realizar la sentencia");
+                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, e);     
+            }
+        }
     }
 
     @FXML
@@ -124,16 +184,19 @@ public class ProveedoresController implements Initializable {
                 preparedStmt.setString (2, rfc);
                 preparedStmt.setString(3, telefono);
                 preparedStmt.execute();
-                cn.close();
+                
                 
                 Alert dialogAlert2 = new Alert(Alert.AlertType.CONFIRMATION);
                 dialogAlert2.setTitle("Exito");
                 dialogAlert2.setContentText("Se guardo con exito");
                 dialogAlert2.initStyle(StageStyle.UTILITY);
                 dialogAlert2.showAndWait();
+                
             } catch (SQLException e) {
                 System.err.println("\nError!... No se pudo realizar la sentencia");
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, e);            
+            }finally{
+                visualizateData();
             }
         }
     }
@@ -145,6 +208,7 @@ public class ProveedoresController implements Initializable {
     
     
     public void visualizateData(){
+        
         String sql = "SELECT * FROM proveedores";
         data = FXCollections.observableArrayList();
         
@@ -181,15 +245,32 @@ public class ProveedoresController implements Initializable {
                 }
                 System.out.println("Row [1] added "+row );
                 data.add(row);
-
+                
             }
 
             //FINALLY ADDED TO TableView
             tablaProveedores.setItems(data);
+            
         } catch (SQLException e) {
-            System.err.println("\nMe llevo la ");
+            System.err.println("\nError!!!... sentencia no ejecutada");
             Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, e);            
         }
+         
+         
+        tablaProveedores.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observableValue, Object oldValue, Object newValue) {
+                //Check whether item is selected and set value of selected item to Label
+                if(tablaProveedores.getSelectionModel().getSelectedItem() != null) {    
+                   System.out.println(newValue);
+                   String []values = newValue.toString().replace("[", "").replace("]", "") .split(",");
+                   verIdProv.setText(values[0]);
+                   verNombreProv.setText(values[1]);
+                   verRFCProv.setText(values[2]);
+                   verTelefonoProv.setText(values[3]);
+                }
+            }
+        });
     }
     
 }
