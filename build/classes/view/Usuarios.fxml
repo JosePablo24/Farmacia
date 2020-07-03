@@ -42,6 +42,6 @@
       </Label>
       <Button fx:id="borrar" layoutX="103.0" layoutY="569.0" mnemonicParsing="false" onAction="#borrar" prefHeight="25.0" prefWidth="77.0" style="-fx-background-color: red; -fx-background-radius: 20;" text="Borrar" textFill="WHITE" AnchorPane.bottomAnchor="64.0" />
       <Button fx:id="editar" layoutX="238.0" layoutY="575.0" mnemonicParsing="false" onAction="#editar" prefHeight="25.0" prefWidth="77.0" style="-fx-background-color: green; -fx-background-radius: 20;" text="Editar" textFill="WHITE" AnchorPane.bottomAnchor="64.0" />
-      <TextField fx:id="idOculto" layoutX="553.0" layoutY="159.0" prefHeight="2.0" prefWidth="108.0" />
+      <TextField fx:id="idOculto" layoutX="553.0" layoutY="159.0" opacity="0.64" prefHeight="2.0" prefWidth="108.0" />
    </children>
 </AnchorPane>
