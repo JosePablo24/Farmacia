@@ -8,18 +8,17 @@ package controller;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import conections.Conexion;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -39,10 +38,8 @@ import javafx.stage.StageStyle;
 import model.Person_system;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
-
-import java.util.ArrayList;
-
+import javafx.scene.input.MouseDragEvent;
+import javafx.scene.input.MouseEvent;
 
 /**
  * FXML Controller class
@@ -117,10 +114,20 @@ public class UsuariosController implements Initializable {
     @FXML
     private TextField search;
     
+    
+    @FXML
+    private Button borrar;
+
+    @FXML
+    private Button editar;
+
+    
     private ObservableList listaUsuarios = FXCollections.observableArrayList();
     
     @FXML
     public void initialize(URL url, ResourceBundle rb) {
+    	borrar.setDisable(true);
+    	editar.setDisable(true);
     	mostrarUsuarios();
     }
     
@@ -153,7 +160,7 @@ public class UsuariosController implements Initializable {
 	String username;
 	String pass;
 	String rl; 
-	String Usuarios_id;
+	int Usuarios_id;
 	
     @FXML
     void guardar(ActionEvent event)  throws IOException {    	                                                                              
@@ -192,7 +199,6 @@ public class UsuariosController implements Initializable {
                 			alerta.setHeaderText(null);
                 			alerta.showAndWait();
                 			mostrarUsuarios();
-                        	cn.close();
                         }
                     } catch (SQLException e) {
                         Alert dialogAlert2 = new Alert(Alert.AlertType.WARNING);
@@ -299,14 +305,109 @@ public class UsuariosController implements Initializable {
 	                return name.contains(text.toLowerCase());
 	            });
 	        });
-            
 		} catch (Exception e) {
 			System.err.println("\nMe llevo la ");
             Logger.getLogger(UsuariosController.class.getName()).log(Level.SEVERE, null, e); 
 		}
     }
     
+    boolean band2 =false;
     
+    @FXML
+    void borrar(ActionEvent event){   	
+    	try {
+        	String auxUser= person.getUser();
+        	Person_system persona = (Person_system) this.tableUsers.getSelectionModel().getSelectedItem();
+        	StringProperty valorUsuario = persona.getUsuario(); 
+        	String auxValorUsuario = valorUsuario.get();
+        	if(auxUser.equals(auxValorUsuario)) {
+    			Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+    			alerta.setTitle("Advertencia");
+    			alerta.setContentText("No se puede eliminar uno mismo");
+    			alerta.initStyle(StageStyle.UTILITY);
+    			alerta.setHeaderText(null);
+    			alerta.showAndWait();
+    			
+        	}else {
+            	try {
+                	IntegerProperty id = persona.getId(); 
+                	int idAux = id.get();
+            		String sql = "SELECT * FROM Login WHERE id="+"'"+idAux+"'";
+                	String sql2 = "DELETE FROM Login WHERE id="+"'"+idAux+"'";
+                	Statement st = cn.createStatement();
+                    ResultSet rs = st.executeQuery(sql);
+                    System.out.println("entro");
+                    while(rs.next()){
+                        idAux = rs.getInt(1);
+                        username = rs.getString(2);
+                        pass = rs.getString(3);
+                        rl = rs.getString(4);
+                        Usuarios_id = rs.getInt(5);
+                        band2 = true;
+                    }
+                    if(band2) {
+                        PreparedStatement preparedStmt = cn.prepareStatement(sql2);
+                        preparedStmt.execute();
+                    	System.out.println("entro");
+            			String sql3 = "DELETE FROM Usuarios WHERE Usuarios.id="+"'"+Usuarios_id+"'";
+            			preparedStmt = cn.prepareStatement(sql3);
+            			preparedStmt.execute();
+            			Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+            			alerta.setTitle("Advertencia");
+            			alerta.setContentText("Usuario eliminado");
+            			alerta.initStyle(StageStyle.UTILITY);
+            			alerta.setHeaderText(null);
+            			alerta.showAndWait();
+            	    	borrar.setDisable(true);
+            	    	editar.setDisable(true);
+            			mostrarUsuarios();
+                    }else {
+            			Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+            			alerta.setTitle("Advertencia");
+            			alerta.setContentText("Ocurrio un error al eliminar el usuario");
+            			alerta.initStyle(StageStyle.UTILITY);
+            			alerta.setHeaderText(null);
+            			alerta.showAndWait();
+                    }
+        		} catch (Exception e) {
+        			Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+        			alerta.setTitle("Advertencia");
+        			alerta.setContentText("Ocurrio un error al eliminar el usuario");
+        			alerta.initStyle(StageStyle.UTILITY);
+        			alerta.setHeaderText(null);
+        			alerta.showAndWait();
+        		}
+            }	
+		} catch (Exception e) {
+			Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+			alerta.setTitle("Advertencia");
+			alerta.setContentText("Parece que no selecciono un usuario");
+			alerta.initStyle(StageStyle.UTILITY);
+			alerta.setHeaderText(null);
+			alerta.showAndWait();
+		}
+    }
+    	
+    
+    @FXML
+    void editar(ActionEvent event) {
+
+    }
+    
+
+    @FXML
+    void presionado(MouseEvent event) {
+    	borrar.setDisable(false);
+    	editar.setDisable(false);
+    }
+    
+
+    @FXML
+    void deseleccionar(MouseEvent event) {
+    	borrar.setDisable(true);
+    	editar.setDisable(true);
+    	tableUsers.getSelectionModel().clearSelection();
+    }
     public void clearInformation() {
     	nombre.clear();
     	edad.clear();

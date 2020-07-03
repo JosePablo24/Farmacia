@@ -8,10 +8,10 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="665.0" prefWidth="1235.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.UsuariosController">
+<AnchorPane id="AnchorPane" onMousePressed="#deseleccionar" prefHeight="665.0" prefWidth="1235.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.UsuariosController">
    <children>
       <Button fx:id="regresar" layoutX="42.0" layoutY="43.0" mnemonicParsing="false" onAction="#regresar" prefHeight="25.0" prefWidth="77.0" style="-fx-background-color: #1F8FE8; -fx-background-radius: 20;" text="Regresar" textFill="WHITE" />
-      <TableView fx:id="tableUsers" layoutX="42.0" layoutY="210.0" prefHeight="254.0" prefWidth="752.0" />
+      <TableView fx:id="tableUsers" layoutX="42.0" layoutY="210.0" onMousePressed="#presionado" prefHeight="254.0" prefWidth="752.0" />
       <Label layoutX="921.0" layoutY="36.0" prefHeight="21.0" prefWidth="185.0" text="Registro de usuarios">
          <font>
             <Font size="17.0" />
@@ -40,5 +40,8 @@
             <Font size="16.0" />
          </font>
       </Label>
+      <Button fx:id="borrar" layoutX="103.0" layoutY="569.0" mnemonicParsing="false" onAction="#borrar" prefHeight="25.0" prefWidth="77.0" style="-fx-background-color: red; -fx-background-radius: 20;" text="Borrar" textFill="WHITE" AnchorPane.bottomAnchor="64.0" />
+      <Button fx:id="editar" layoutX="238.0" layoutY="575.0" mnemonicParsing="false" onAction="#editar" prefHeight="25.0" prefWidth="77.0" style="-fx-background-color: green; -fx-background-radius: 20;" text="Editar" textFill="WHITE" AnchorPane.bottomAnchor="64.0" />
+      <Label contentDisplay="CENTER" layoutX="44.0" layoutY="490.0" prefHeight="69.0" prefWidth="608.0" style="-fx-border-color: white;" text="Si desea eliminar o editar un usuario haga click en cualquier usuario en la tabla o click fuera de la tabla para deseleccionar al usuario y no hacer nada." textOverrun="CLIP" wrapText="true" AnchorPane.leftAnchor="44.0" />
    </children>
 </AnchorPane>
