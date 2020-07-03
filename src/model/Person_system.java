@@ -14,12 +14,28 @@ public class Person_system {
     public float cambio;
     public String rol;
     public String Nombre;
+    public String apellidoPaterno;
+    public String apellidoMaterno;
+    public String edad;
+    public String sexo;
+    public int id;
     
     public Person_system(){
         this.Nombre = "";
         this.rol = "";
         this.user = "";
         this.cambio = 0;
+    }
+    
+    public Person_system(int id, String user, String Nombre,String apellidoPaterno,String apellidoMaterno, String edad,String sexo, String rol){
+        this.id=id;
+    	this.Nombre = Nombre;
+        this.apellidoPaterno = apellidoPaterno;
+        this.apellidoMaterno = apellidoMaterno;
+        this.edad = edad;
+        this.sexo = sexo;
+        this.user = user;
+        this.rol = rol;
     }
 
     public String getNombre() {
@@ -56,4 +72,45 @@ public class Person_system {
         this.rol = rol;
         System.out.println(rol);
     }            
+
+    public void setApellidoPaterno(String apellidoPaterno) {
+    	this.apellidoPaterno = apellidoPaterno;
+    }
+    
+    public String getApellidoPaterno() {
+    	return apellidoPaterno;
+    }
+    
+    public void setApellidoMaterno(String apellidoMaterno) {
+    	this.apellidoMaterno = apellidoMaterno;
+    }
+    
+    public String getApellidoMaterno() {
+    	return apellidoMaterno;
+    }
+    
+    public void setEdad(String edad) {
+    	this.edad=edad;
+    }
+    
+    public String getEdad() {
+    	return edad;
+    }
+    
+    public void setSexo(String sexo) {
+    	this.sexo=sexo;
+    }
+    public String getSexo() {
+    	return sexo;
+    }
+    
+    public void setId(int id) {
+    	this.id=id;
+    }
+    public int getId() {
+    	return id;
+    }
+    
+    
 }
+
