@@ -111,17 +111,21 @@ public class ProveedoresController implements Initializable {
             String nombre = verNombreProv.getText();
             String telefono = verTelefonoProv.getText();
             String rfc = verRFCProv.getText();
-            String query = " UPDATE proveedores (id, Nombre, Rfc, Telefono)" +" Values (?, ?, ?)";
+            //String query = " UPDATE proveedores (id, Nombre, Rfc, Telefono)" +" Values (?, ?, ?)";
             //st.execute("UPDATE ciudades SET id = '"+id+"' where idciudad ="+idCiudad);
             
             try {
-                PreparedStatement preparedStmt = cn.prepareStatement("UPDATE Messages SET Nombre = ?, Rfc = ?, Telefono = ?  WHERE id = ?");
-
-                preparedStmt.setString (1, nombre);
-                preparedStmt.setString (2, rfc);
-                preparedStmt.setString(3, telefono);
+                String query = "UPDATE proveedores SET nombre = ?, Telefono = ?, Rfc = ? where id = ?";
+                PreparedStatement preparedStmt = cn.prepareStatement(query);
+                preparedStmt.setString  (1, nombre);
+                preparedStmt.setString(2, telefono);
+                preparedStmt.setString(3, rfc);
                 preparedStmt.setInt(4, id);
+
+                // execute the java preparedstatement
                 preparedStmt.executeUpdate();
+
+                cn.close();
                 
                 
                 Alert dialogAlert2 = new Alert(Alert.AlertType.CONFIRMATION);
@@ -129,7 +133,7 @@ public class ProveedoresController implements Initializable {
                 dialogAlert2.setContentText("Se guardo con exito");
                 dialogAlert2.initStyle(StageStyle.UTILITY);
                 dialogAlert2.showAndWait();
-                
+                visualizateData();
             } catch (SQLException e) {
                 System.err.println("\nError!... No se pudo realizar la sentencia");
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, e);            
