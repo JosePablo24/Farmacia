@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -13,26 +12,18 @@
          <font>
             <Font size="14.0" />
          </font></Button>
-      <TableView layoutX="14.0" layoutY="213.0" prefHeight="307.0" prefWidth="573.0">
-        <columns>
-          <TableColumn prefWidth="48.0" text="id" />
-          <TableColumn prefWidth="166.0" text="Nombre" />
-            <TableColumn prefWidth="138.0" text="Telefono" />
-            <TableColumn prefWidth="110.0" text="RFC" />
-            <TableColumn prefWidth="110.0" text="Opciones" />
-        </columns>
-      </TableView>
+      <TableView fx:id="tablaProveedores" layoutX="14.0" layoutY="213.0" prefHeight="307.0" prefWidth="573.0" />
       <Button layoutX="210.0" layoutY="166.0" mnemonicParsing="false" onMouseClicked="#OnMouseClickedNuevoProveedor" prefHeight="38.0" prefWidth="109.0" style="-fx-background-color: #F56000; -fx-background-radius: 20;" text="Nuevo" textFill="WHITE">
          <font>
             <Font size="14.0" />
          </font>
       </Button>
-      <TextField fx:id="nombreNuevoProv" layoutX="33.0" layoutY="31.0" prefHeight="26.0" prefWidth="226.0" promptText="Nombre" text="Nombre" />
-      <TextField fx:id="telefonoNuevoProv" layoutX="33.0" layoutY="79.0" prefHeight="26.0" prefWidth="226.0" promptText="Telefono" text="Telefono" />
-      <TextField fx:id="rfcNuevoProv" layoutX="33.0" layoutY="134.0" prefHeight="26.0" prefWidth="226.0" promptText="RFC" text="RFC" />
-      <TextField fx:id="verNombreProv" layoutX="630.0" layoutY="300.0" prefHeight="26.0" prefWidth="226.0" promptText="Cambio en caja" text="Nombre" />
-      <TextField fx:id="verTelefonoProv" layoutX="630.0" layoutY="348.0" prefHeight="26.0" prefWidth="226.0" promptText="Cambio en caja" text="Telefono" />
-      <TextField fx:id="verRFCProv" layoutX="630.0" layoutY="403.0" prefHeight="26.0" prefWidth="226.0" promptText="Cambio en caja" text="RFC" />
+      <TextField fx:id="nombreNuevoProv" layoutX="33.0" layoutY="31.0" prefHeight="26.0" prefWidth="226.0" promptText="Nombre" />
+      <TextField fx:id="telefonoNuevoProv" layoutX="33.0" layoutY="79.0" prefHeight="26.0" prefWidth="226.0" promptText="Telefono" />
+      <TextField fx:id="rfcNuevoProv" layoutX="33.0" layoutY="134.0" prefHeight="26.0" prefWidth="226.0" promptText="RFC" />
+      <TextField fx:id="verNombreProv" layoutX="630.0" layoutY="300.0" prefHeight="26.0" prefWidth="226.0" promptText="Nombre" />
+      <TextField fx:id="verTelefonoProv" layoutX="630.0" layoutY="348.0" prefHeight="26.0" prefWidth="226.0" promptText="Telefono" />
+      <TextField fx:id="verRFCProv" layoutX="630.0" layoutY="403.0" prefHeight="26.0" prefWidth="226.0" promptText="RFC" />
       <Button layoutX="627.0" layoutY="459.0" mnemonicParsing="false" onMouseClicked="#OnMouseClickedEditar" prefHeight="38.0" prefWidth="109.0" style="-fx-background-color: #AC00F4; -fx-background-radius: 20;" text="Editar" textFill="WHITE">
          <font>
             <Font size="14.0" />
