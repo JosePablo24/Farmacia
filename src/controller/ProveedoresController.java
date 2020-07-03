@@ -15,6 +15,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import model.Person_system;
 /**
@@ -30,6 +32,24 @@ public class ProveedoresController implements Initializable {
     
     @FXML    private Button regresar;
     Person_system person;
+    
+    @FXML
+    private TextField nombreNuevoProv;
+
+    @FXML
+    private TextField telefonoNuevoProv;
+
+    @FXML
+    private TextField rfcNuevoProv;
+
+    @FXML
+    private TextField verNombreProv;
+
+    @FXML
+    private TextField verTelefonoProv;
+
+    @FXML
+    private TextField verRFCProv;
     
     @FXML
     public void initialize(URL url, ResourceBundle rb) {
@@ -51,8 +71,26 @@ public class ProveedoresController implements Initializable {
         stage1.close();
     }
     
+    
+    @FXML
+    void OnMouseClickedEditar(MouseEvent event) {
+
+    }
+
+    @FXML
+    void OnMouseClickedEliminar(MouseEvent event) {
+
+    }
+
+    @FXML
+    void OnMouseClickedNuevoProveedor(MouseEvent event) {
+    
+    }
+
+        
     public void informacion(Person_system person){                
         this.person = person;
     }
+    
     
 }
