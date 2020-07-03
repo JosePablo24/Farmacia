@@ -2,10 +2,68 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.text.Font?>
 
-
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1" fx:controller="controller.ProductosController">
+<AnchorPane id="AnchorPane" prefHeight="541.0" prefWidth="885.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1" fx:controller="controller.ProductosController">
    <children>
-      <Button fx:id="regresar" layoutX="492.0" layoutY="35.0" mnemonicParsing="false" onAction="#regresar" prefHeight="25.0" prefWidth="84.0" style="-fx-background-color: #1F8FE8; -fx-background-radius: 20;" text="Regresar" textFill="WHITE" />
+    <Button fx:id="regresar" layoutX="755.0" layoutY="25.0" mnemonicParsing="false" onAction="#regresar" prefHeight="38.0" prefWidth="109.0" style="-fx-background-color: #1F8FE8; -fx-background-radius: 20;" text="Regresar" textFill="WHITE">
+         <font>
+            <Font size="14.0" />
+         </font></Button>
+      <TableView layoutX="14.0" layoutY="213.0" prefHeight="307.0" prefWidth="573.0">
+        <columns>
+          <TableColumn prefWidth="31.0" text="id" />
+          <TableColumn prefWidth="114.0" text="Nombre" />
+            <TableColumn prefWidth="153.0" text="Descripcion" />
+            <TableColumn prefWidth="39.0" text="N°" />
+            <TableColumn prefWidth="52.0" text="IVA" />
+            <TableColumn prefWidth="101.0" text="Precio C/U" />
+            <TableColumn prefWidth="79.0" text="id Proveedor" />
+        </columns>
+      </TableView>
+      <Button fx:id="nuevo" layoutX="424.0" layoutY="70.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="109.0" style="-fx-background-color: #F56000; -fx-background-radius: 20;" text="Nuevo" textFill="WHITE">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
+      <TextField fx:id="nombreNuevoPro" layoutX="33.0" layoutY="31.0" prefHeight="26.0" prefWidth="209.0" promptText="Nombre" text="Nombre" />
+      <TextField fx:id="descripcionNuevoPro" layoutX="265.0" layoutY="31.0" prefHeight="26.0" prefWidth="268.0" promptText="Descripcion" text="Descripcion" />
+      <TextField fx:id="cantidadNuevoPro" layoutX="33.0" layoutY="63.0" prefHeight="26.0" prefWidth="48.0" promptText="cantidad" text="N°" />
+      <TextField fx:id="verNombrePro" layoutX="627.0" layoutY="191.0" prefHeight="26.0" prefWidth="226.0" promptText="Cambio en caja" text="Nombre" />
+      <TextField fx:id="verDescripcionPro" layoutX="627.0" layoutY="239.0" prefHeight="26.0" prefWidth="226.0" promptText="Cambio en caja" text="Descripcion" />
+      <TextField fx:id="verCantidadPro" layoutX="627.0" layoutY="283.0" prefHeight="26.0" prefWidth="226.0" promptText="Cambio en caja" text="Cantidad" />
+      <Button fx:id="editar" layoutX="627.0" layoutY="459.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="109.0" style="-fx-background-color: #AC00F4; -fx-background-radius: 20;" text="Editar" textFill="WHITE">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
+      <Button fx:id="eliminar" layoutX="755.0" layoutY="459.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="109.0" style="-fx-background-color: #F50F00; -fx-background-radius: 20;" text="Eliminar" textFill="WHITE">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
+      <TextField fx:id="verIdProv" disable="true" layoutX="627.0" layoutY="143.0" prefHeight="26.0" prefWidth="226.0" promptText="id" text="id" />
+      <TextField fx:id="ivaNuevoPro" layoutX="94.0" layoutY="63.0" prefHeight="26.0" prefWidth="48.0" promptText="IVA" text="IVA" />
+      <TextField fx:id="precioNuevoPro" layoutX="157.0" layoutY="63.0" prefHeight="26.0" prefWidth="85.0" promptText="Precio C/U" text="Precio C/U" />
+      <TextField fx:id="idProvNuevoPro" layoutX="265.0" layoutY="63.0" prefHeight="26.0" prefWidth="109.0" promptText="id Proveedor" text="id Proveedor" />
+      <TextField fx:id="verIVAProv" layoutX="627.0" layoutY="321.0" prefHeight="26.0" prefWidth="226.0" promptText="Cambio en caja" text="IVA" />
+      <TextField fx:id="verPrecioPro" layoutX="627.0" layoutY="369.0" prefHeight="26.0" prefWidth="226.0" promptText="Cambio en caja" text="Precio C/U" />
+      <TextField fx:id="verIDProvePro" layoutX="627.0" layoutY="413.0" prefHeight="26.0" prefWidth="226.0" promptText="Cambio en caja" text="id Proveedor" />
+      <Button fx:id="buscar" layoutX="271.0" layoutY="172.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="85.0" style="-fx-background-color: #3BCA22; -fx-background-radius: 20;" text="Buscar" textFill="WHITE">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
+      <TextField fx:id="buscarNombrePro" layoutX="46.0" layoutY="143.0" prefHeight="26.0" prefWidth="116.0" promptText="Nombre" text="Nombre" />
+      <TextField fx:id="buscarDescripcionPro" layoutX="162.0" layoutY="143.0" prefHeight="26.0" prefWidth="151.0" promptText="Nombre" text="Descripcion" />
+      <TextField fx:id="buscarCantidadPro" layoutX="313.0" layoutY="143.0" prefHeight="26.0" prefWidth="41.0" promptText="Nombre" text="N°" />
+      <TextField fx:id="buscarIVAPro" layoutX="354.0" layoutY="143.0" prefHeight="26.0" prefWidth="48.0" promptText="Nombre" text="IVA" />
+      <TextField fx:id="buscarPrecioPro" layoutX="402.0" layoutY="143.0" prefHeight="26.0" prefWidth="102.0" promptText="Nombre" text="Precio C/U" />
+      <TextField fx:id="buscarIDProvPro" layoutX="504.0" layoutY="143.0" prefHeight="26.0" prefWidth="85.0" promptText="Nombre" text="id Proveedor" />
+      <TextField fx:id="buscarIDPro" layoutX="13.0" layoutY="143.0" prefHeight="26.0" prefWidth="33.0" promptText="Nombre" text="id" />
+   
    </children>
 </AnchorPane>

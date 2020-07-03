@@ -17,7 +17,7 @@ public class Conexion {
     public Connection conexion(){        
         try{
             Class.forName("com.mysql.jdbc.Driver");
-            conectar = DriverManager.getConnection("jdbc:mysql://localhost/farmacia","root","");
+            conectar = DriverManager.getConnection("jdbc:mysql://localhost/puntoventasfarmacia","root","");
             System.out.println("conectado");
             //JOptionPane.showMessageDialog(null,"conectado");
         }catch(Exception e){
