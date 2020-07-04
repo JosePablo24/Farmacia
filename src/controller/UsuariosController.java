@@ -31,6 +31,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
 import javafx.stage.Stage;
@@ -121,13 +122,23 @@ public class UsuariosController implements Initializable {
 
 	@FXML
 	private Button editar;
+	
+
+    @FXML
+    private Button cancelar;
+
+    @FXML
+    private Label title;
 
 	private ObservableList listaUsuarios = FXCollections.observableArrayList();
+
 
 	@FXML
 	public void initialize(URL url, ResourceBundle rb) {
 		borrar.setDisable(true);
 		editar.setDisable(true);
+		cancelar.setDisable(true);
+		idOculto.setDisable(true);
 		mostrarUsuarios();
 	}
 
@@ -150,6 +161,7 @@ public class UsuariosController implements Initializable {
 		stage1.close();
 	}
 
+	boolean bandData = false;
 	boolean band = false;
 	int id;
 	String name;
@@ -164,7 +176,10 @@ public class UsuariosController implements Initializable {
 
 	@FXML
 	void guardar(ActionEvent event) throws Exception {
+		cc = new Conexion();
+		cn = cc.conexion();
 		if (acceso) {
+			acceso=false;
 			System.out.println(idOculto.getText());
 			Statement st = cn.createStatement();
 			String query = "SELECT * FROM Login WHERE Usuarios_id = '" + idOculto.getText() + "'";
@@ -176,136 +191,114 @@ public class UsuariosController implements Initializable {
 				Usuarios_id = rs.getInt(5);
 			}
 			System.out.println(id);
-			if (!nombre.getText().equals("") && !apellidoPaterno.getText().equals("")
-					&& !apellidoMaterno.getText().equals("") && !edad.getText().equals("") && !sexo.getText().equals("")
-					&& !usuario.getText().equals("") && !password.getText().equals("") && !rol.getText().equals("")) {
+			if (validateDataInput()) {
+				if(validateUser()) {
+					try {
+						if (Integer.parseInt(edad.getText()) < 0) {
+							System.err.println("No se puede");
+						} else {
+							String sql = "UPDATE Usuarios SET Nombre=?, Apellido_paterno=?, Apellido_materno=?, Edad=?, Sexo=? WHERE id=?";
+
+							PreparedStatement statement = cn.prepareStatement(sql);
+							statement.setString(1, nombre.getText());
+							statement.setString(2, apellidoPaterno.getText());
+							statement.setString(3, apellidoMaterno.getText());
+							statement.setString(4, edad.getText());
+							statement.setString(5, sexo.getText());
+							statement.setInt(6, Usuarios_id);
+							int rowsUpdated = statement.executeUpdate();
+							if (rowsUpdated > 0) {
+								System.out.println("An existing user was updated successfully!");
+								String sql2 = "UPDATE Login SET User=?, Pasword=?, Rol=?, Usuarios_id=? WHERE id=?";
+								statement = cn.prepareStatement(sql2);
+								statement.setString(1, usuario.getText());
+								statement.setString(2, password.getText());
+								statement.setString(3, rol.getText());
+								statement.setInt(4, Usuarios_id);
+								statement.setInt(5, id);
+								statement.executeUpdate();
+								alertSucces();
+								clearInformation();
+								cancelar.setDisable(true);
+						    	title.setText("Registro de usuarios");
+								mostrarUsuarios();
+							} else {
+								alertError();
+								cn.close();
+							}
+
+						}
+					} catch (Exception e) {
+				    	acceso=true;
+						alertErrorYear();
+						cn.close();
+					}
+				}else {
+			    	acceso=true;
+					alertTypeUser();
+					cn.close();
+				}
+			} else {
+				alertEmptyInput();
+				cn.close();
+			}
+
+		} else if (validateDataInput()) {
+			if(validateUser()) {
 				try {
 					if (Integer.parseInt(edad.getText()) < 0) {
 						System.err.println("No se puede");
 					} else {
-						String sql = "UPDATE Usuarios SET Nombre=?, Apellido_paterno=?, Apellido_materno=?, Edad=?, Sexo=? WHERE id=?";
-
-						PreparedStatement statement = cn.prepareStatement(sql);
-						statement.setString(1, nombre.getText());
-						statement.setString(2, apellidoPaterno.getText());
-						statement.setString(3, apellidoMaterno.getText());
-						statement.setString(4, edad.getText());
-						statement.setString(5, sexo.getText());
-						System.out.println("aca" + idOculto.getText());
-						statement.setInt(6, Usuarios_id);
-						int rowsUpdated = statement.executeUpdate();
-						if (rowsUpdated > 0) {
-							System.out.println("An existing user was updated successfully!");
-							String sql2 = "UPDATE Login SET User=?, Pasword=?, Rol=?, Usuarios_id=? WHERE id=?";
-							statement = cn.prepareStatement(sql2);
-							statement.setString(1, usuario.getText());
-							statement.setString(2, password.getText());
-							statement.setString(3, rol.getText());
-							statement.setInt(4, Usuarios_id);
-							statement.setInt(5, id);
-							System.out.println(idOculto.getText());
-							statement.executeUpdate();
-							Alert alerta = new Alert(Alert.AlertType.INFORMATION);
-							alerta.setTitle("Advertencia");
-							alerta.setContentText("Usuario actualizado con exito");
-							alerta.initStyle(StageStyle.UTILITY);
-							alerta.setHeaderText(null);
-							alerta.showAndWait();
-							mostrarUsuarios();
-						} else {
-							Alert alerta = new Alert(Alert.AlertType.INFORMATION);
-							alerta.setTitle("Advertencia");
-							alerta.setContentText("Ocurrio un error al actualizar");
-							alerta.initStyle(StageStyle.UTILITY);
-							alerta.setHeaderText(null);
-							alerta.showAndWait();
+						String sql = "INSERT INTO Usuarios (Nombre,Apellido_Paterno,Apellido_materno,Edad,Sexo) VALUES ('"
+								+ nombre.getText() + "','" + apellidoPaterno.getText() + "','" + apellidoMaterno.getText()
+								+ "','" + edad.getText() + "','" + sexo.getText() + "')";
+						try {
+							Statement st = cn.createStatement();
+							st.executeUpdate(sql);
+							String query = "SELECT * FROM Usuarios WHERE Usuarios.Nombre = '" + nombre.getText() + "'";
+							st = cn.createStatement();
+							ResultSet rs = st.executeQuery(query);
+							while (rs.next()) {
+								id = rs.getInt(1);
+								name = rs.getString(2);
+								apPat = rs.getString(3);
+								apMat = rs.getString(4);
+								year = rs.getInt(5);
+								sex = rs.getString(6);
+								band = true;
+							}
+							if (band = true) {
+								String sql2 = "INSERT INTO Login (User,Pasword,Rol,Usuarios_id) VALUES ('"
+										+ usuario.getText() + "','" + password.getText() + "','" + rol.getText() + "','"
+										+ id + "')";
+								st.executeUpdate(sql2);
+								String query2 = "SELECT * FROM Login";
+								st = cn.createStatement();
+								rs = st.executeQuery(query2);
+								clearInformation();
+								alertSucces();
+								mostrarUsuarios();
+							}else {
+								alertError();
+								cn.close();
+							}
+						} catch (SQLException e) {
+							alertError();
+							cn.close();
 						}
-
 					}
 				} catch (Exception e) {
-					Alert alerta = new Alert(Alert.AlertType.INFORMATION);
-					alerta.setTitle("Advertencia");
-					alerta.setContentText("La edad no puede incluir caracteres");
-					alerta.initStyle(StageStyle.UTILITY);
-					alerta.setHeaderText(null);
-					alerta.showAndWait();
-				}
-
-			} else {
-				Alert alerta = new Alert(Alert.AlertType.INFORMATION);
-				alerta.setTitle("Advertencia");
-				alerta.setContentText("Hay campos vacios vuelva a verificar");
-				alerta.initStyle(StageStyle.UTILITY);
-				alerta.setHeaderText(null);
-				alerta.showAndWait();
+					alertErrorYear();
+					cn.close();
+				}			
+			}else {
+				alertTypeUser();
+				cn.close();
 			}
 
-		} else if (!nombre.getText().equals("") && !apellidoPaterno.getText().equals("")
-				&& !apellidoMaterno.getText().equals("") && !edad.getText().equals("") && !sexo.getText().equals("")
-				&& !usuario.getText().equals("") && !password.getText().equals("") && !rol.getText().equals("")) {
-			try {
-				if (Integer.parseInt(edad.getText()) < 0) {
-					System.err.println("No se puede");
-				} else {
-					String sql = "INSERT INTO Usuarios (Nombre,Apellido_Paterno,Apellido_materno,Edad,Sexo) VALUES ('"
-							+ nombre.getText() + "','" + apellidoPaterno.getText() + "','" + apellidoMaterno.getText()
-							+ "','" + edad.getText() + "','" + sexo.getText() + "')";
-					try {
-						Statement st = cn.createStatement();
-						st.executeUpdate(sql);
-						String query = "SELECT * FROM Usuarios WHERE Usuarios.Nombre = '" + nombre.getText() + "'";
-						st = cn.createStatement();
-						ResultSet rs = st.executeQuery(query);
-						while (rs.next()) {
-							id = rs.getInt(1);
-							name = rs.getString(2);
-							apPat = rs.getString(3);
-							apMat = rs.getString(4);
-							year = rs.getInt(5);
-							sex = rs.getString(6);
-							band = true;
-						}
-						if (band = true) {
-							String sql2 = "INSERT INTO Login (User,Pasword,Rol,Usuarios_id) VALUES ('"
-									+ usuario.getText() + "','" + password.getText() + "','" + rol.getText() + "','"
-									+ id + "')";
-							st.executeUpdate(sql2);
-							String query2 = "SELECT * FROM Login";
-							st = cn.createStatement();
-							rs = st.executeQuery(query2);
-							clearInformation();
-							Alert alerta = new Alert(Alert.AlertType.INFORMATION);
-							alerta.setTitle("Advertencia");
-							alerta.setContentText("Usuario Agregado");
-							alerta.initStyle(StageStyle.UTILITY);
-							alerta.setHeaderText(null);
-							alerta.showAndWait();
-							mostrarUsuarios();
-						}
-					} catch (SQLException e) {
-						Alert dialogAlert2 = new Alert(Alert.AlertType.WARNING);
-						dialogAlert2.setTitle("Advertencia");
-						dialogAlert2.setContentText("Error al guardar");
-						dialogAlert2.initStyle(StageStyle.UTILITY);
-						dialogAlert2.showAndWait();
-						Logger.getLogger(UsuariosController.class.getName()).log(Level.SEVERE, null, e);
-
-					}
-				}
-			} catch (Exception e) {
-				Alert dialogAlert2 = new Alert(Alert.AlertType.WARNING);
-				dialogAlert2.setTitle("Advertencia");
-				dialogAlert2.setContentText("La edad no puede incluir caracteres");
-				dialogAlert2.initStyle(StageStyle.UTILITY);
-				dialogAlert2.showAndWait();
-			}
 		} else {
-			Alert alerta = new Alert(Alert.AlertType.INFORMATION);
-			alerta.setTitle("Advertencia");
-			alerta.setContentText("Hay campos vacios vuelva a verificar");
-			alerta.initStyle(StageStyle.UTILITY);
-			alerta.setHeaderText(null);
-			alerta.showAndWait();
+			alertEmptyInput();
+			cn.close();
 		}
 
 	}
@@ -381,6 +374,7 @@ public class UsuariosController implements Initializable {
 					return name.contains(text.toLowerCase());
 				});
 			});
+			cn.close();
 		} catch (Exception e) {
 			System.err.println("\nMe llevo la ");
 			Logger.getLogger(UsuariosController.class.getName()).log(Level.SEVERE, null, e);
@@ -390,7 +384,9 @@ public class UsuariosController implements Initializable {
 	boolean band2 = false;
 
 	@FXML
-	void borrar(ActionEvent event) {
+	void borrar(ActionEvent event) throws SQLException {
+		cc = new Conexion();
+		cn = cc.conexion();
 		try {
 			String auxUser = person.getUser();
 			Person_system persona = (Person_system) this.tableUsers.getSelectionModel().getSelectedItem();
@@ -412,7 +408,6 @@ public class UsuariosController implements Initializable {
 					String sql2 = "DELETE FROM Login WHERE id=" + "'" + idAux + "'";
 					Statement st = cn.createStatement();
 					ResultSet rs = st.executeQuery(sql);
-					System.out.println("entro");
 					while (rs.next()) {
 						idAux = rs.getInt(1);
 						username = rs.getString(2);
@@ -424,43 +419,28 @@ public class UsuariosController implements Initializable {
 					if (band2) {
 						PreparedStatement preparedStmt = cn.prepareStatement(sql2);
 						preparedStmt.execute();
-						System.out.println("entro");
 						String sql3 = "DELETE FROM Usuarios WHERE Usuarios.id=" + "'" + Usuarios_id + "'";
 						preparedStmt = cn.prepareStatement(sql3);
 						preparedStmt.execute();
-						Alert alerta = new Alert(Alert.AlertType.INFORMATION);
-						alerta.setTitle("Advertencia");
-						alerta.setContentText("Usuario eliminado");
-						alerta.initStyle(StageStyle.UTILITY);
-						alerta.setHeaderText(null);
-						alerta.showAndWait();
+						alertSucces();
 						borrar.setDisable(true);
 						editar.setDisable(true);
+						cancelar.setDisable(true);
+						guardar.setDisable(false);
+						clearInformation();
 						mostrarUsuarios();
 					} else {
-						Alert alerta = new Alert(Alert.AlertType.INFORMATION);
-						alerta.setTitle("Advertencia");
-						alerta.setContentText("Ocurrio un error al eliminar el usuario");
-						alerta.initStyle(StageStyle.UTILITY);
-						alerta.setHeaderText(null);
-						alerta.showAndWait();
+						alertError();
+						cn.close();
 					}
 				} catch (Exception e) {
-					Alert alerta = new Alert(Alert.AlertType.INFORMATION);
-					alerta.setTitle("Advertencia");
-					alerta.setContentText("Ocurrio un error al eliminar el usuario");
-					alerta.initStyle(StageStyle.UTILITY);
-					alerta.setHeaderText(null);
-					alerta.showAndWait();
+					cn.close();
+					alertError();
 				}
 			}
 		} catch (Exception e) {
-			Alert alerta = new Alert(Alert.AlertType.INFORMATION);
-			alerta.setTitle("Advertencia");
-			alerta.setContentText("Parece que no selecciono un usuario");
-			alerta.initStyle(StageStyle.UTILITY);
-			alerta.setHeaderText(null);
-			alerta.showAndWait();
+			cn.close();
+			alertNoSelectUser();
 		}
 	}
 
@@ -468,13 +448,15 @@ public class UsuariosController implements Initializable {
 
 	@FXML
 	void editar(ActionEvent event) throws Exception {
+		guardar.setDisable(false);
+		title.setText("Editar Usuario");
 		try {
 			Person_system persona = (Person_system) this.tableUsers.getSelectionModel().getSelectedItem();
 			acceso = true;
-			int a = persona.getId().get();
-			String ab = "" + a;
-			System.out.println(ab);
-			idOculto.setText((ab));
+			int idFactory = persona.getId().get();
+			String id = "" + idFactory;
+			System.out.println(id);
+			idOculto.setText((id));
 			nombre.setText(persona.getName());
 			apellidoPaterno.setText(persona.getApellidoPaterno().get());
 			apellidoMaterno.setText(persona.getApellidoMaterno().get());
@@ -485,29 +467,32 @@ public class UsuariosController implements Initializable {
 			borrar.setDisable(true);
 			editar.setDisable(true);
 		} catch (Exception e) {
-			Alert alerta = new Alert(Alert.AlertType.INFORMATION);
-			alerta.setTitle("Advertencia");
-			alerta.setContentText("Parece que no selecciono un usuario");
-			alerta.initStyle(StageStyle.UTILITY);
-			alerta.setHeaderText(null);
-			alerta.showAndWait();
+			guardar.setDisable(true);
+			title.setText("Registro de usuarios");
+			alertNoSelectUser();
 		}
 
 	}
 
 	@FXML
 	void presionado(MouseEvent event) {
+		guardar.setDisable(true);
 		borrar.setDisable(false);
 		editar.setDisable(false);
+		cancelar.setDisable(false);
 	}
-
-	@FXML
-	void deseleccionar(MouseEvent event) {
+	
+    @FXML
+    void cancelar(ActionEvent event) {
+    	title.setText("Registro de usuarios");
+    	acceso=false;
+		guardar.setDisable(false);
 		borrar.setDisable(true);
 		editar.setDisable(true);
+		cancelar.setDisable(true);
 		tableUsers.getSelectionModel().clearSelection();
 		clearInformation();
-	}
+    }
 
 	public void clearInformation() {
 		nombre.clear();
@@ -518,6 +503,81 @@ public class UsuariosController implements Initializable {
 		usuario.clear();
 		password.clear();
 		rol.clear();
+	}
+
+	public void alertNoSelectUser() {
+		Alert alerta = new Alert(Alert.AlertType.WARNING);
+		alerta.setTitle("WARNING");
+		alerta.setContentText("Parece que no selecciono un usuario");
+		alerta.initStyle(StageStyle.UTILITY);
+		alerta.setHeaderText(null);
+		alerta.showAndWait();
+	}
+
+	public void alertError() {
+		Alert alerta = new Alert(Alert.AlertType.ERROR);
+		alerta.setTitle("ERROR");
+		alerta.setContentText("Ocurrio un error en la operacion");
+		alerta.initStyle(StageStyle.UTILITY);
+		alerta.setHeaderText(null);
+		alerta.showAndWait();
+	}
+
+	public void alertErrorYear() {
+		Alert dialogAlert2 = new Alert(Alert.AlertType.ERROR);
+		dialogAlert2.setTitle("ERROR");
+		dialogAlert2.setContentText("La edad no puede incluir caracteres");
+		dialogAlert2.initStyle(StageStyle.UTILITY);
+		dialogAlert2.showAndWait();
+	}
+
+	public void alertSucces() {
+		Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+		alerta.setTitle("Completado");
+		alerta.setContentText("Operacion completada con exito");
+		alerta.initStyle(StageStyle.UTILITY);
+		alerta.setHeaderText(null);
+		alerta.showAndWait();
+	}
+
+	public void alertEmptyInput() {
+		Alert alerta = new Alert(Alert.AlertType.WARNING);
+		alerta.setTitle("WARNING");
+		alerta.setContentText("Hay campos vacios vuelva a verificar");
+		alerta.initStyle(StageStyle.UTILITY);
+		alerta.setHeaderText(null);
+		alerta.showAndWait();
+	}
+	
+	public void alertTypeUser() {
+		Alert alerta = new Alert(Alert.AlertType.ERROR);
+		alerta.setTitle("ERROR");
+		alerta.setContentText("El rol solo puede ser Admin o Cajero");
+		alerta.initStyle(StageStyle.UTILITY);
+		alerta.setHeaderText(null);
+		alerta.showAndWait();
+	}
+
+	public boolean validateUser() {
+		System.out.println(usuario.getText());
+		if(rol.getText().equals("Admin") || rol.getText().equals("Cajero")) {
+			System.out.println("true");
+			return true;
+		}else {
+			System.out.println("false");
+			return false;
+		}
+	}
+	public boolean validateDataInput(){
+		if (!nombre.getText().equals("") && !apellidoPaterno.getText().equals("")
+				&& !apellidoMaterno.getText().equals("") && !edad.getText().equals("") && !sexo.getText().equals("")
+				&& !usuario.getText().equals("") && !password.getText().equals("") && !rol.getText().equals("")){
+			bandData=true;	
+		}else{
+			bandData=false;
+		}
+		System.out.println(bandData);
+		return bandData;
 	}
 
 	public void informacion(Person_system person) {

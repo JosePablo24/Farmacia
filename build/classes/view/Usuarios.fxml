@@ -7,12 +7,13 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane id="AnchorPane" onMousePressed="#deseleccionar" prefHeight="665.0" prefWidth="1235.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.UsuariosController">
+<AnchorPane id="AnchorPane" prefHeight="665.0" prefWidth="1235.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.UsuariosController">
    <children>
       <Button fx:id="regresar" layoutX="42.0" layoutY="43.0" mnemonicParsing="false" onAction="#regresar" prefHeight="25.0" prefWidth="77.0" style="-fx-background-color: #1F8FE8; -fx-background-radius: 20;" text="Regresar" textFill="WHITE" />
       <TableView fx:id="tableUsers" layoutX="42.0" layoutY="210.0" onMousePressed="#presionado" prefHeight="254.0" prefWidth="752.0" />
-      <Label layoutX="921.0" layoutY="36.0" prefHeight="21.0" prefWidth="185.0" text="Registro de usuarios">
+      <Label fx:id="title" layoutX="921.0" layoutY="36.0" prefHeight="21.0" prefWidth="185.0" text="Registro de usuarios">
          <font>
             <Font size="17.0" />
          </font>
@@ -40,8 +41,15 @@
             <Font size="16.0" />
          </font>
       </Label>
-      <Button fx:id="borrar" layoutX="103.0" layoutY="569.0" mnemonicParsing="false" onAction="#borrar" prefHeight="25.0" prefWidth="77.0" style="-fx-background-color: red; -fx-background-radius: 20;" text="Borrar" textFill="WHITE" AnchorPane.bottomAnchor="64.0" />
-      <Button fx:id="editar" layoutX="238.0" layoutY="575.0" mnemonicParsing="false" onAction="#editar" prefHeight="25.0" prefWidth="77.0" style="-fx-background-color: green; -fx-background-radius: 20;" text="Editar" textFill="WHITE" AnchorPane.bottomAnchor="64.0" />
-      <TextField fx:id="idOculto" layoutX="553.0" layoutY="159.0" opacity="0.64" prefHeight="2.0" prefWidth="108.0" />
+      <Button fx:id="borrar" layoutX="103.0" layoutY="569.0" mnemonicParsing="false" onAction="#borrar" prefHeight="25.0" prefWidth="77.0" style="-fx-background-color: red; -fx-background-radius: 20;" text="Borrar" textFill="WHITE" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="103.0" />
+      <Button fx:id="editar" layoutX="238.0" layoutY="575.0" mnemonicParsing="false" onAction="#editar" prefHeight="25.0" prefWidth="77.0" style="-fx-background-color: green; -fx-background-radius: 20;" text="Editar" textFill="WHITE" AnchorPane.bottomAnchor="70.0" />
+      <TextField fx:id="idOculto" layoutX="553.0" layoutY="159.0" opacity="0.0" prefHeight="2.0" prefWidth="108.0" />
+      <Button fx:id="cancelar" layoutX="380.0" layoutY="575.0" mnemonicParsing="false" onAction="#cancelar" prefHeight="25.0" prefWidth="77.0" style="-fx-background-color: ORANGE; -fx-background-radius: 20;" text="Cancelar" textFill="WHITE" AnchorPane.bottomAnchor="70.0" />
+      <Text layoutX="101.0" layoutY="535.0" lineSpacing="1.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Para habilitar las Acciones debe dar click a un elemento en la tabla." AnchorPane.leftAnchor="103.0" />
+      <Text layoutX="103.0" layoutY="505.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Info:" wrappingWidth="61.0" AnchorPane.leftAnchor="103.0">
+         <font>
+            <Font size="19.0" />
+         </font>
+      </Text>
    </children>
 </AnchorPane>
