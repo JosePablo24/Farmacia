@@ -122,16 +122,14 @@ public class UsuariosController implements Initializable {
 
 	@FXML
 	private Button editar;
-	
 
-    @FXML
-    private Button cancelar;
+	@FXML
+	private Button cancelar;
 
-    @FXML
-    private Label title;
+	@FXML
+	private Label title;
 
 	private ObservableList listaUsuarios = FXCollections.observableArrayList();
-
 
 	@FXML
 	public void initialize(URL url, ResourceBundle rb) {
@@ -179,7 +177,7 @@ public class UsuariosController implements Initializable {
 		cc = new Conexion();
 		cn = cc.conexion();
 		if (acceso) {
-			acceso=false;
+			acceso = false;
 			System.out.println(idOculto.getText());
 			Statement st = cn.createStatement();
 			String query = "SELECT * FROM Login WHERE Usuarios_id = '" + idOculto.getText() + "'";
@@ -192,7 +190,7 @@ public class UsuariosController implements Initializable {
 			}
 			System.out.println(id);
 			if (validateDataInput()) {
-				if(validateUser()) {
+				if (validateUser()) {
 					try {
 						if (Integer.parseInt(edad.getText()) < 0) {
 							System.err.println("No se puede");
@@ -220,7 +218,7 @@ public class UsuariosController implements Initializable {
 								alertSucces();
 								clearInformation();
 								cancelar.setDisable(true);
-						    	title.setText("Registro de usuarios");
+								title.setText("Registro de usuarios");
 								mostrarUsuarios();
 							} else {
 								alertError();
@@ -229,12 +227,12 @@ public class UsuariosController implements Initializable {
 
 						}
 					} catch (Exception e) {
-				    	acceso=true;
+						acceso = true;
 						alertErrorYear();
 						cn.close();
 					}
-				}else {
-			    	acceso=true;
+				} else {
+					acceso = true;
 					alertTypeUser();
 					cn.close();
 				}
@@ -244,14 +242,14 @@ public class UsuariosController implements Initializable {
 			}
 
 		} else if (validateDataInput()) {
-			if(validateUser()) {
+			if (validateUser()) {
 				try {
 					if (Integer.parseInt(edad.getText()) < 0) {
 						System.err.println("No se puede");
 					} else {
 						String sql = "INSERT INTO Usuarios (Nombre,Apellido_Paterno,Apellido_materno,Edad,Sexo) VALUES ('"
-								+ nombre.getText() + "','" + apellidoPaterno.getText() + "','" + apellidoMaterno.getText()
-								+ "','" + edad.getText() + "','" + sexo.getText() + "')";
+								+ nombre.getText() + "','" + apellidoPaterno.getText() + "','"
+								+ apellidoMaterno.getText() + "','" + edad.getText() + "','" + sexo.getText() + "')";
 						try {
 							Statement st = cn.createStatement();
 							st.executeUpdate(sql);
@@ -278,7 +276,7 @@ public class UsuariosController implements Initializable {
 								clearInformation();
 								alertSucces();
 								mostrarUsuarios();
-							}else {
+							} else {
 								alertError();
 								cn.close();
 							}
@@ -290,8 +288,8 @@ public class UsuariosController implements Initializable {
 				} catch (Exception e) {
 					alertErrorYear();
 					cn.close();
-				}			
-			}else {
+				}
+			} else {
 				alertTypeUser();
 				cn.close();
 			}
@@ -481,18 +479,18 @@ public class UsuariosController implements Initializable {
 		editar.setDisable(false);
 		cancelar.setDisable(false);
 	}
-	
-    @FXML
-    void cancelar(ActionEvent event) {
-    	title.setText("Registro de usuarios");
-    	acceso=false;
+
+	@FXML
+	void cancelar(ActionEvent event) {
+		title.setText("Registro de usuarios");
+		acceso = false;
 		guardar.setDisable(false);
 		borrar.setDisable(true);
 		editar.setDisable(true);
 		cancelar.setDisable(true);
 		tableUsers.getSelectionModel().clearSelection();
 		clearInformation();
-    }
+	}
 
 	public void clearInformation() {
 		nombre.clear();
@@ -548,7 +546,7 @@ public class UsuariosController implements Initializable {
 		alerta.setHeaderText(null);
 		alerta.showAndWait();
 	}
-	
+
 	public void alertTypeUser() {
 		Alert alerta = new Alert(Alert.AlertType.ERROR);
 		alerta.setTitle("ERROR");
@@ -560,21 +558,22 @@ public class UsuariosController implements Initializable {
 
 	public boolean validateUser() {
 		System.out.println(usuario.getText());
-		if(rol.getText().equals("Admin") || rol.getText().equals("Cajero")) {
+		if (rol.getText().equals("Admin") || rol.getText().equals("Cajero")) {
 			System.out.println("true");
 			return true;
-		}else {
+		} else {
 			System.out.println("false");
 			return false;
 		}
 	}
-	public boolean validateDataInput(){
+
+	public boolean validateDataInput() {
 		if (!nombre.getText().equals("") && !apellidoPaterno.getText().equals("")
 				&& !apellidoMaterno.getText().equals("") && !edad.getText().equals("") && !sexo.getText().equals("")
-				&& !usuario.getText().equals("") && !password.getText().equals("") && !rol.getText().equals("")){
-			bandData=true;	
-		}else{
-			bandData=false;
+				&& !usuario.getText().equals("") && !password.getText().equals("") && !rol.getText().equals("")) {
+			bandData = true;
+		} else {
+			bandData = false;
 		}
 		System.out.println(bandData);
 		return bandData;
