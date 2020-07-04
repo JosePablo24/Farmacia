@@ -85,96 +85,6 @@ public class ProveedoresController implements Initializable {
 
     @FXML private TextField filtroRfc;
 
-    @FXML
-    void OnMouseClickedBuscarProveedor(MouseEvent event) {
-        String query = "Where";
-        
-        if(filtroId.getText().equals("") && filtroNombre.getText().equals("") && fltroTelefono.getText().equals("") && filtroRfc.getText().equals("")){
-            Alert dialogAlert2 = new Alert(Alert.AlertType.WARNING);
-            dialogAlert2.setTitle("Advertencia");
-            dialogAlert2.setContentText("Debe llenar al menos campo");
-            dialogAlert2.initStyle(StageStyle.UTILITY);
-            dialogAlert2.showAndWait();
-        }else{
-            if(!filtroId.getText().equals("")){
-                query = " id = "+filtroId+"";
-            }
-            if(!filtroNombre.getText().equals("")){
-                query += "and Nombre = '"+filtroNombre+"'";
-            }
-            if(!fltroTelefono.getText().equals("")){
-                query += "and Telefono = '"+fltroTelefono+"'";
-            }
-            if(!filtroRfc.getText().equals("")){
-                query += "and Rfc = '"+rfcNuevoProv+"'";
-            }
-            String sql = "SELECT * FROM proveedores WHERE "+query;
-            data = FXCollections.observableArrayList();
-
-             try {            
-                Statement st = cn.createStatement();
-                ResultSet rs = st.executeQuery(sql);
-                       
-             /**********************************
-             * TABLE COLUMN ADDED DYNAMICALLY *
-             **********************************/
-            for(int i=0 ; i<rs.getMetaData().getColumnCount(); i++){
-                //We are using non property style for making dynamic table
-                final int j = i;                
-                TableColumn col = new TableColumn(rs.getMetaData().getColumnName(i+1));
-                
-                col.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>,ObservableValue<String>>(){                    
-                    public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {                                                                                              
-                        return new SimpleStringProperty(param.getValue().get(j).toString());                        
-                    }                    
-                });
-
-                tablaProveedores.getColumns().addAll(col); 
-                System.out.println("Column ["+i+"] ");
-            }
-            
-            /********************************
-             * Data added to ObservableList *
-             ********************************/
-            data.clear();
-            while(rs.next()){
-                //Iterate Row
-                ObservableList<String> row = FXCollections.observableArrayList();
-                for(int i=1 ; i<=rs.getMetaData().getColumnCount(); i++){
-                    //Iterate Column
-                    row.add(rs.getString(i));
-                }
-                System.out.println("Row [1] added "+row );
-                data.add(row);
-                
-            }
-
-            //FINALLY ADDED TO TableView
-            tablaProveedores.getItems().clear();
-            tablaProveedores.setItems(data);
-            
-        } catch (SQLException e) {
-            System.err.println("\nError!!!... sentencia no ejecutada");
-            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, e);            
-        }
-         
-         
-        tablaProveedores.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
-            @Override
-            public void changed(ObservableValue observableValue, Object oldValue, Object newValue) {
-                //Check whether item is selected and set value of selected item to Label
-                if(tablaProveedores.getSelectionModel().getSelectedItem() != null) {    
-                   System.out.println(newValue);
-                   String []values = newValue.toString().replace("[", "").replace("]", "") .split(",");
-                   verIdProv.setText(values[0]);
-                   verNombreProv.setText(values[1]);
-                   verRFCProv.setText(values[2]);
-                   verTelefonoProv.setText(values[3]);
-                }
-            }
-        });
-        }
-    }
     
     @FXML
     public void initialize(URL url, ResourceBundle rb) {
@@ -195,7 +105,10 @@ public class ProveedoresController implements Initializable {
         Stage stage1 = (Stage) regresar.getScene().getWindow();
         stage1.close();
     }
-    
+    @FXML
+    void OnMouseClcikedMostrarTodo(MouseEvent event) {
+        updateInfoTable();
+    }
     
     @FXML
     void OnMouseClickedEditar(MouseEvent event) {
@@ -316,6 +229,102 @@ public class ProveedoresController implements Initializable {
         }
     }
 
+    @FXML
+    void OnMouseClickedBuscarProveedor(MouseEvent event) {
+        String query = "Where";
+        boolean largeQuery = false;
+        if(filtroId.getText().equals("") && filtroNombre.getText().equals("") && fltroTelefono.getText().equals("") && filtroRfc.getText().equals("")){
+            Alert dialogAlert2 = new Alert(Alert.AlertType.WARNING);
+            dialogAlert2.setTitle("Advertencia");
+            dialogAlert2.setContentText("Debe llenar al menos campo");
+            dialogAlert2.initStyle(StageStyle.UTILITY);
+            dialogAlert2.showAndWait();
+            largeQuery = false;
+        }else{
+            if(!filtroId.getText().equals("")){
+                if(!largeQuery)
+                    query = " id = "+filtroId.getText()+"";
+                else{
+                    query = " and id = "+filtroId.getText()+"";
+                }
+                largeQuery = true;
+            }
+            if(!filtroNombre.getText().equals("")){
+                if(!largeQuery)
+                    query = " Nombre = '"+filtroNombre.getText()+"' ";
+                else{
+                    query += " and Nombre = '"+filtroNombre.getText()+"' ";
+                }
+                largeQuery = true;
+            }
+            if(!fltroTelefono.getText().equals("")){
+                if(!largeQuery)
+                    query = " Telefono = '"+fltroTelefono.getText()+"' ";
+                else{
+                    query += " and Telefono = '"+fltroTelefono.getText()+"' ";
+                }
+                largeQuery = true;
+            }
+            if(!filtroRfc.getText().equals("")){
+                if(!largeQuery)
+                    query = " Rfc = '"+rfcNuevoProv.getText()+"' ";
+                else{
+                    query += " and Rfc = '"+rfcNuevoProv.getText()+"' ";
+                }
+                largeQuery = true;
+            }
+            String sql = "SELECT * FROM proveedores WHERE "+query;
+            System.out.println(sql);
+            data = FXCollections.observableArrayList();
+
+             try {            
+                Statement st = cn.createStatement();
+                ResultSet rs = st.executeQuery(sql);
+
+
+                /********************************
+                 * Data added to ObservableList *
+                 ********************************/
+                data.clear();
+                while(rs.next()){
+                    //Iterate Row
+                    ObservableList<String> row = FXCollections.observableArrayList();
+                    for(int i=1 ; i<=rs.getMetaData().getColumnCount(); i++){
+                        //Iterate Column
+                        row.add(rs.getString(i));
+                    }
+                    System.out.println("Row [1] added "+row );
+                    data.add(row);
+
+                }
+
+                //FINALLY ADDED TO TableView
+                tablaProveedores.getItems().clear();
+                tablaProveedores.setItems(data);
+
+            } catch (SQLException e) {
+                System.err.println("\nError!!!... sentencia no ejecutada");
+                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, e);            
+            }
+         
+         
+        tablaProveedores.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observableValue, Object oldValue, Object newValue) {
+                //Check whether item is selected and set value of selected item to Label
+                if(tablaProveedores.getSelectionModel().getSelectedItem() != null) {    
+                   System.out.println(newValue);
+                   String []values = newValue.toString().replace("[", "").replace("]", "") .split(",");
+                   verIdProv.setText(values[0]);
+                   verNombreProv.setText(values[1]);
+                   verRFCProv.setText(values[2]);
+                   verTelefonoProv.setText(values[3]);
+                }
+            }
+        });
+        }
+    }
+    
         
     public void informacion(Person_system person){                
         this.person = person;

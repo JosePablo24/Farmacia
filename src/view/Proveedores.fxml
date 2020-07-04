@@ -39,7 +39,7 @@
       <TextField fx:id="filtroId" layoutX="22.0" layoutY="165.0" prefHeight="26.0" prefWidth="51.0" promptText="Id" />
       <TextField fx:id="filtroNombre" layoutX="79.0" layoutY="165.0" prefHeight="26.0" prefWidth="226.0" promptText="Nombre" />
       <TextField fx:id="fltroTelefono" layoutX="326.0" layoutY="165.0" prefHeight="26.0" prefWidth="226.0" promptText="Telefono" />
-      <TextField fx:id="filtroRfc" layoutX="21.0" layoutY="209.0" prefHeight="26.0" prefWidth="226.0" promptText="RFC" text="RFC" />
+      <TextField fx:id="filtroRfc" layoutX="21.0" layoutY="209.0" prefHeight="26.0" prefWidth="226.0" promptText="RFC" />
       <Button layoutX="276.0" layoutY="201.0" mnemonicParsing="false" onMouseClicked="#OnMouseClickedBuscarProveedor" prefHeight="38.0" prefWidth="109.0" style="-fx-background-color: #00A816; -fx-background-radius: 20;" text="Buscar" textFill="WHITE">
          <font>
             <Font size="14.0" />
@@ -56,5 +56,10 @@
       <Label layoutX="634.0" layoutY="363.0" prefHeight="20.0" prefWidth="51.0" text="Telefono" />
       <Label layoutX="635.0" layoutY="416.0" prefHeight="20.0" prefWidth="51.0" text="RFC" />
       <Label layoutX="635.0" layoutY="264.0" prefHeight="20.0" prefWidth="51.0" text="Id" />
+      <Button layoutX="489.0" layoutY="203.0" mnemonicParsing="false" onMouseClicked="#OnMouseClcikedMostrarTodo" prefHeight="38.0" prefWidth="109.0" style="-fx-background-color: #0086BF; -fx-background-radius: 20;" text="Mostrar todo" textFill="WHITE">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>
