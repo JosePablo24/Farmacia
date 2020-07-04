@@ -273,6 +273,7 @@ public class UsuariosController implements Initializable {
 								String query2 = "SELECT * FROM Login";
 								st = cn.createStatement();
 								rs = st.executeQuery(query2);
+								band = false;
 								clearInformation();
 								alertSucces();
 								mostrarUsuarios();
@@ -425,6 +426,7 @@ public class UsuariosController implements Initializable {
 						editar.setDisable(true);
 						cancelar.setDisable(true);
 						guardar.setDisable(false);
+						band2 = false;
 						clearInformation();
 						mostrarUsuarios();
 					} else {
