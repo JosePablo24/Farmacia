@@ -77,6 +77,105 @@ public class ProveedoresController implements Initializable {
     
     @FXML private TextField verIdProv;
     
+    @FXML private TextField filtroId;
+    
+    @FXML private TextField filtroNombre;
+
+    @FXML private TextField fltroTelefono;
+
+    @FXML private TextField filtroRfc;
+
+    @FXML
+    void OnMouseClickedBuscarProveedor(MouseEvent event) {
+        String query = "Where";
+        
+        if(filtroId.getText().equals("") && filtroNombre.getText().equals("") && fltroTelefono.getText().equals("") && filtroRfc.getText().equals("")){
+            Alert dialogAlert2 = new Alert(Alert.AlertType.WARNING);
+            dialogAlert2.setTitle("Advertencia");
+            dialogAlert2.setContentText("Debe llenar al menos campo");
+            dialogAlert2.initStyle(StageStyle.UTILITY);
+            dialogAlert2.showAndWait();
+        }else{
+            if(!filtroId.getText().equals("")){
+                query = " id = "+filtroId+"";
+            }
+            if(!filtroNombre.getText().equals("")){
+                query += "and Nombre = '"+filtroNombre+"'";
+            }
+            if(!fltroTelefono.getText().equals("")){
+                query += "and Telefono = '"+fltroTelefono+"'";
+            }
+            if(!filtroRfc.getText().equals("")){
+                query += "and Rfc = '"+rfcNuevoProv+"'";
+            }
+            String sql = "SELECT * FROM proveedores WHERE "+query;
+            data = FXCollections.observableArrayList();
+
+             try {            
+                Statement st = cn.createStatement();
+                ResultSet rs = st.executeQuery(sql);
+                       
+             /**********************************
+             * TABLE COLUMN ADDED DYNAMICALLY *
+             **********************************/
+            for(int i=0 ; i<rs.getMetaData().getColumnCount(); i++){
+                //We are using non property style for making dynamic table
+                final int j = i;                
+                TableColumn col = new TableColumn(rs.getMetaData().getColumnName(i+1));
+                
+                col.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>,ObservableValue<String>>(){                    
+                    public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {                                                                                              
+                        return new SimpleStringProperty(param.getValue().get(j).toString());                        
+                    }                    
+                });
+
+                tablaProveedores.getColumns().addAll(col); 
+                System.out.println("Column ["+i+"] ");
+            }
+            
+            /********************************
+             * Data added to ObservableList *
+             ********************************/
+            data.clear();
+            while(rs.next()){
+                //Iterate Row
+                ObservableList<String> row = FXCollections.observableArrayList();
+                for(int i=1 ; i<=rs.getMetaData().getColumnCount(); i++){
+                    //Iterate Column
+                    row.add(rs.getString(i));
+                }
+                System.out.println("Row [1] added "+row );
+                data.add(row);
+                
+            }
+
+            //FINALLY ADDED TO TableView
+            tablaProveedores.getItems().clear();
+            tablaProveedores.setItems(data);
+            
+        } catch (SQLException e) {
+            System.err.println("\nError!!!... sentencia no ejecutada");
+            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, e);            
+        }
+         
+         
+        tablaProveedores.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observableValue, Object oldValue, Object newValue) {
+                //Check whether item is selected and set value of selected item to Label
+                if(tablaProveedores.getSelectionModel().getSelectedItem() != null) {    
+                   System.out.println(newValue);
+                   String []values = newValue.toString().replace("[", "").replace("]", "") .split(",");
+                   verIdProv.setText(values[0]);
+                   verNombreProv.setText(values[1]);
+                   verRFCProv.setText(values[2]);
+                   verTelefonoProv.setText(values[3]);
+                }
+            }
+        });
+        }
+    }
+    
     @FXML
     public void initialize(URL url, ResourceBundle rb) {
         visualizateData();
@@ -125,7 +224,7 @@ public class ProveedoresController implements Initializable {
                 // execute the java preparedstatement
                 preparedStmt.executeUpdate();
 
-                cn.close();
+                
                 
                 
                 Alert dialogAlert2 = new Alert(Alert.AlertType.CONFIRMATION);
@@ -133,12 +232,13 @@ public class ProveedoresController implements Initializable {
                 dialogAlert2.setContentText("Se guardo con exito");
                 dialogAlert2.initStyle(StageStyle.UTILITY);
                 dialogAlert2.showAndWait();
-                visualizateData();
+                
+                
             } catch (SQLException e) {
                 System.err.println("\nError!... No se pudo realizar la sentencia");
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, e);            
             }finally{
-                visualizateData();
+                updateInfoTable();
             }
         }
     }
@@ -160,11 +260,20 @@ public class ProveedoresController implements Initializable {
                 preparedStmt.setInt(1, id);
                 preparedStmt.execute();
       
-                cn.close();
-                visualizateData();
+                
+                
+                
+                Alert dialogAlert2 = new Alert(Alert.AlertType.CONFIRMATION);
+                dialogAlert2.setTitle("Exito");
+                dialogAlert2.setContentText("Se elimino con exito");
+                dialogAlert2.initStyle(StageStyle.UTILITY);
+                dialogAlert2.showAndWait();
+                
             } catch (Exception e) {
                 System.err.println("\nError!... No se pudo realizar la sentencia");
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, e);     
+            }finally{
+                updateInfoTable();
             }
         }
     }
@@ -189,6 +298,7 @@ public class ProveedoresController implements Initializable {
                 preparedStmt.setString(3, telefono);
                 preparedStmt.execute();
                 
+               
                 
                 Alert dialogAlert2 = new Alert(Alert.AlertType.CONFIRMATION);
                 dialogAlert2.setTitle("Exito");
@@ -196,11 +306,12 @@ public class ProveedoresController implements Initializable {
                 dialogAlert2.initStyle(StageStyle.UTILITY);
                 dialogAlert2.showAndWait();
                 
+                
             } catch (SQLException e) {
                 System.err.println("\nError!... No se pudo realizar la sentencia");
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, e);            
             }finally{
-                visualizateData();
+                 updateInfoTable();
             }
         }
     }
@@ -211,7 +322,7 @@ public class ProveedoresController implements Initializable {
     }
     
     
-    public void visualizateData(){
+    private void visualizateData(){
         
         String sql = "SELECT * FROM proveedores";
         data = FXCollections.observableArrayList();
@@ -227,6 +338,7 @@ public class ProveedoresController implements Initializable {
                 //We are using non property style for making dynamic table
                 final int j = i;                
                 TableColumn col = new TableColumn(rs.getMetaData().getColumnName(i+1));
+                
                 col.setCellValueFactory(new Callback<CellDataFeatures<ObservableList,String>,ObservableValue<String>>(){                    
                     public ObservableValue<String> call(CellDataFeatures<ObservableList, String> param) {                                                                                              
                         return new SimpleStringProperty(param.getValue().get(j).toString());                        
@@ -240,6 +352,7 @@ public class ProveedoresController implements Initializable {
             /********************************
              * Data added to ObservableList *
              ********************************/
+            
             while(rs.next()){
                 //Iterate Row
                 ObservableList<String> row = FXCollections.observableArrayList();
@@ -253,6 +366,7 @@ public class ProveedoresController implements Initializable {
             }
 
             //FINALLY ADDED TO TableView
+            
             tablaProveedores.setItems(data);
             
         } catch (SQLException e) {
@@ -277,4 +391,34 @@ public class ProveedoresController implements Initializable {
         });
     }
     
+    
+    private void updateInfoTable(){
+        String sql = "SELECT * FROM proveedores";
+        data = FXCollections.observableArrayList();
+        
+        try {
+            Statement st = cn.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            
+            while(rs.next()){
+                //Iterate Row
+                ObservableList<String> row = FXCollections.observableArrayList();
+                for(int i=1 ; i<=rs.getMetaData().getColumnCount(); i++){
+                    //Iterate Column
+                    row.add(rs.getString(i));
+                }
+                System.out.println("Row [1] added "+row );
+                data.add(row);
+                
+            }
+
+            //FINALLY ADDED TO TableView
+            
+            tablaProveedores.setItems(data);
+            tablaProveedores.refresh();
+        } catch (Exception e) {
+        }
+        
+        
+    }
 }

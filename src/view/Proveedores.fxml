@@ -1,39 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="541.0" prefWidth="885.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ProveedoresController">
+<AnchorPane id="AnchorPane" prefHeight="568.0" prefWidth="885.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ProveedoresController">
    <children>
       <Button fx:id="regresar" layoutX="755.0" layoutY="25.0" mnemonicParsing="false" onAction="#regresar" prefHeight="38.0" prefWidth="109.0" style="-fx-background-color: #1F8FE8; -fx-background-radius: 20;" text="Regresar" textFill="WHITE">
          <font>
             <Font size="14.0" />
          </font></Button>
-      <TableView fx:id="tablaProveedores" layoutX="14.0" layoutY="213.0" prefHeight="307.0" prefWidth="573.0" />
-      <Button layoutX="210.0" layoutY="166.0" mnemonicParsing="false" onMouseClicked="#OnMouseClickedNuevoProveedor" prefHeight="38.0" prefWidth="109.0" style="-fx-background-color: #F56000; -fx-background-radius: 20;" text="Nuevo" textFill="WHITE">
+      <TableView fx:id="tablaProveedores" layoutX="18.0" layoutY="247.0" prefHeight="307.0" prefWidth="573.0" />
+      <Button layoutX="281.0" layoutY="63.0" mnemonicParsing="false" onMouseClicked="#OnMouseClickedNuevoProveedor" prefHeight="38.0" prefWidth="109.0" style="-fx-background-color: #F56000; -fx-background-radius: 20;" text="Nuevo" textFill="WHITE">
          <font>
             <Font size="14.0" />
          </font>
       </Button>
-      <TextField fx:id="nombreNuevoProv" layoutX="33.0" layoutY="31.0" prefHeight="26.0" prefWidth="226.0" promptText="Nombre" />
-      <TextField fx:id="telefonoNuevoProv" layoutX="33.0" layoutY="79.0" prefHeight="26.0" prefWidth="226.0" promptText="Telefono" />
-      <TextField fx:id="rfcNuevoProv" layoutX="33.0" layoutY="134.0" prefHeight="26.0" prefWidth="226.0" promptText="RFC" />
-      <TextField fx:id="verNombreProv" layoutX="630.0" layoutY="300.0" prefHeight="26.0" prefWidth="226.0" promptText="Nombre" />
-      <TextField fx:id="verTelefonoProv" layoutX="630.0" layoutY="348.0" prefHeight="26.0" prefWidth="226.0" promptText="Telefono" />
-      <TextField fx:id="verRFCProv" layoutX="630.0" layoutY="403.0" prefHeight="26.0" prefWidth="226.0" promptText="RFC" />
-      <Button layoutX="627.0" layoutY="459.0" mnemonicParsing="false" onMouseClicked="#OnMouseClickedEditar" prefHeight="38.0" prefWidth="109.0" style="-fx-background-color: #AC00F4; -fx-background-radius: 20;" text="Editar" textFill="WHITE">
+      <TextField fx:id="nombreNuevoProv" layoutX="21.0" layoutY="31.0" prefHeight="26.0" prefWidth="226.0" promptText="Nombre" />
+      <TextField fx:id="telefonoNuevoProv" layoutX="275.0" layoutY="31.0" prefHeight="26.0" prefWidth="226.0" promptText="Telefono" />
+      <TextField fx:id="rfcNuevoProv" layoutX="21.0" layoutY="79.0" prefHeight="26.0" prefWidth="226.0" promptText="RFC" />
+      <TextField fx:id="verNombreProv" layoutX="634.0" layoutY="335.0" prefHeight="26.0" prefWidth="226.0" promptText="Nombre" />
+      <TextField fx:id="verTelefonoProv" layoutX="634.0" layoutY="386.0" prefHeight="26.0" prefWidth="226.0" promptText="Telefono" />
+      <TextField fx:id="verRFCProv" layoutX="634.0" layoutY="437.0" prefHeight="26.0" prefWidth="226.0" promptText="RFC" />
+      <Button layoutX="631.0" layoutY="493.0" mnemonicParsing="false" onMouseClicked="#OnMouseClickedEditar" prefHeight="38.0" prefWidth="109.0" style="-fx-background-color: #AC00F4; -fx-background-radius: 20;" text="Editar" textFill="WHITE">
          <font>
             <Font size="14.0" />
          </font>
       </Button>
-      <Button layoutX="755.0" layoutY="459.0" mnemonicParsing="false" onMouseClicked="#OnMouseClickedEliminar" prefHeight="38.0" prefWidth="109.0" style="-fx-background-color: #F50F00; -fx-background-radius: 20;" text="Eliminar" textFill="WHITE">
+      <Button layoutX="759.0" layoutY="493.0" mnemonicParsing="false" onMouseClicked="#OnMouseClickedEliminar" prefHeight="38.0" prefWidth="109.0" style="-fx-background-color: #F50F00; -fx-background-radius: 20;" text="Eliminar" textFill="WHITE">
          <font>
             <Font size="14.0" />
          </font>
       </Button>
-      <TextField fx:id="verIdProv" disable="true" layoutX="630.0" layoutY="252.0" prefHeight="26.0" prefWidth="226.0" promptText="id" text="id" />
+      <TextField fx:id="verIdProv" disable="true" layoutX="634.0" layoutY="286.0" prefHeight="26.0" prefWidth="226.0" promptText="id" text="id" />
+      <TextField fx:id="filtroId" layoutX="22.0" layoutY="165.0" prefHeight="26.0" prefWidth="51.0" promptText="Id" />
+      <TextField fx:id="filtroNombre" layoutX="79.0" layoutY="165.0" prefHeight="26.0" prefWidth="226.0" promptText="Nombre" />
+      <TextField fx:id="fltroTelefono" layoutX="326.0" layoutY="165.0" prefHeight="26.0" prefWidth="226.0" promptText="Telefono" />
+      <TextField fx:id="filtroRfc" layoutX="21.0" layoutY="209.0" prefHeight="26.0" prefWidth="226.0" promptText="RFC" text="RFC" />
+      <Button layoutX="276.0" layoutY="201.0" mnemonicParsing="false" onMouseClicked="#OnMouseClickedBuscarProveedor" prefHeight="38.0" prefWidth="109.0" style="-fx-background-color: #00A816; -fx-background-radius: 20;" text="Buscar" textFill="WHITE">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
+      <Label layoutX="21.0" layoutY="12.0" prefHeight="20.0" prefWidth="51.0" text="Nombre" />
+      <Label layoutX="284.0" layoutY="12.0" prefHeight="20.0" prefWidth="51.0" text="Telefono" />
+      <Label layoutX="21.0" layoutY="57.0" prefHeight="20.0" prefWidth="51.0" text="RFC" />
+      <Label layoutX="79.0" layoutY="146.0" prefHeight="20.0" prefWidth="51.0" text="Nombre" />
+      <Label layoutX="331.0" layoutY="146.0" prefHeight="20.0" prefWidth="51.0" text="Telefono" />
+      <Label layoutX="21.0" layoutY="191.0" prefHeight="20.0" prefWidth="51.0" text="RFC" />
+      <Label layoutX="24.0" layoutY="146.0" prefHeight="20.0" prefWidth="51.0" text="Id" />
+      <Label layoutX="634.0" layoutY="312.0" prefHeight="20.0" prefWidth="51.0" text="Nombre" />
+      <Label layoutX="634.0" layoutY="363.0" prefHeight="20.0" prefWidth="51.0" text="Telefono" />
+      <Label layoutX="635.0" layoutY="416.0" prefHeight="20.0" prefWidth="51.0" text="RFC" />
+      <Label layoutX="635.0" layoutY="264.0" prefHeight="20.0" prefWidth="51.0" text="Id" />
    </children>
 </AnchorPane>
