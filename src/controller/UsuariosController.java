@@ -237,6 +237,7 @@ public class UsuariosController implements Initializable {
 					cn.close();
 				}
 			} else {
+				acceso = true;
 				alertEmptyInput();
 				cn.close();
 			}
