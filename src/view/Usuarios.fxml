@@ -1,11 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1" fx:controller="controller.UsuariosController">
+<AnchorPane id="AnchorPane" prefHeight="665.0" prefWidth="1235.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.UsuariosController">
    <children>
-      <Button fx:id="regresar" layoutX="504.0" layoutY="41.0" mnemonicParsing="false" onAction="#regresar" prefHeight="25.0" prefWidth="77.0" style="-fx-background-color: #1F8FE8; -fx-background-radius: 20;" text="Regresar" textFill="WHITE" />
+      <Button fx:id="regresar" layoutX="42.0" layoutY="43.0" mnemonicParsing="false" onAction="#regresar" prefHeight="25.0" prefWidth="77.0" style="-fx-background-color: #1F8FE8; -fx-background-radius: 20;" text="Regresar" textFill="WHITE" />
+      <TableView fx:id="tableUsers" layoutX="42.0" layoutY="210.0" onMousePressed="#presionado" prefHeight="254.0" prefWidth="752.0" />
+      <Label fx:id="title" layoutX="921.0" layoutY="36.0" prefHeight="21.0" prefWidth="185.0" text="Registro de usuarios">
+         <font>
+            <Font size="17.0" />
+         </font>
+      </Label>
+      <TextField fx:id="nombre" layoutX="844.0" layoutY="119.0" prefHeight="26.0" prefWidth="342.0" AnchorPane.leftAnchor="844.0" />
+      <TextField fx:id="apellidoPaterno" layoutX="844.0" layoutY="184.0" prefHeight="26.0" prefWidth="342.0" AnchorPane.leftAnchor="844.0" />
+      <TextField fx:id="apellidoMaterno" layoutX="850.0" layoutY="246.0" prefHeight="26.0" prefWidth="342.0" AnchorPane.leftAnchor="844.0" />
+      <TextField fx:id="edad" layoutX="851.0" layoutY="311.0" prefHeight="26.0" prefWidth="342.0" AnchorPane.leftAnchor="844.0" />
+      <TextField fx:id="sexo" layoutX="851.0" layoutY="375.0" prefHeight="26.0" prefWidth="342.0" AnchorPane.leftAnchor="844.0" />
+      <TextField fx:id="usuario" layoutX="844.0" layoutY="438.0" prefHeight="26.0" prefWidth="342.0" AnchorPane.leftAnchor="844.0" />
+      <PasswordField fx:id="password" layoutX="847.0" layoutY="504.0" prefHeight="26.0" prefWidth="342.0" AnchorPane.leftAnchor="844.0" />
+      <TextField fx:id="rol" layoutX="847.0" layoutY="569.0" prefHeight="26.0" prefWidth="342.0" AnchorPane.leftAnchor="844.0" />
+      <Button fx:id="guardar" layoutX="993.0" layoutY="616.0" mnemonicParsing="false" onAction="#guardar" prefHeight="25.0" prefWidth="77.0" style="-fx-background-color: #1F8FE8; -fx-background-radius: 20;" text="Guardar" textFill="WHITE" />
+      <Label layoutX="844.0" layoutY="90.0" prefHeight="16.0" prefWidth="58.0" text="Nombre:" AnchorPane.leftAnchor="844.0" />
+      <Label layoutX="845.0" layoutY="156.0" prefHeight="16.0" prefWidth="114.0" text="Apellido Paterno:" AnchorPane.leftAnchor="844.0" />
+      <Label layoutX="850.0" layoutY="220.0" prefHeight="16.0" prefWidth="124.0" text="Apellido Materno:" AnchorPane.leftAnchor="844.0" />
+      <TextField fx:id="search" layoutX="104.0" layoutY="161.0" prefHeight="26.0" prefWidth="228.0" promptText="Ingrese el nombre a buscar" />
+      <Label layoutX="852.0" layoutY="285.0" prefHeight="16.0" prefWidth="58.0" text="Edad:" AnchorPane.leftAnchor="844.0" />
+      <Label layoutX="853.0" layoutY="349.0" prefHeight="16.0" prefWidth="58.0" text="Sexo:" AnchorPane.leftAnchor="844.0" />
+      <Label layoutX="846.0" layoutY="413.0" prefHeight="16.0" prefWidth="58.0" text="Usuario:" AnchorPane.leftAnchor="844.0" />
+      <Label layoutX="846.0" layoutY="477.0" prefHeight="16.0" prefWidth="84.0" text="Contraseña:" AnchorPane.leftAnchor="844.0" />
+      <Label layoutX="848.0" layoutY="544.0" prefHeight="16.0" prefWidth="84.0" text="Rol:" AnchorPane.leftAnchor="844.0" />
+      <Label layoutX="42.0" layoutY="164.0" text="Buscar:">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
+      <Button fx:id="borrar" layoutX="103.0" layoutY="569.0" mnemonicParsing="false" onAction="#borrar" prefHeight="25.0" prefWidth="77.0" style="-fx-background-color: red; -fx-background-radius: 20;" text="Borrar" textFill="WHITE" AnchorPane.bottomAnchor="70.0" AnchorPane.leftAnchor="103.0" />
+      <Button fx:id="editar" layoutX="238.0" layoutY="575.0" mnemonicParsing="false" onAction="#editar" prefHeight="25.0" prefWidth="77.0" style="-fx-background-color: green; -fx-background-radius: 20;" text="Editar" textFill="WHITE" AnchorPane.bottomAnchor="70.0" />
+      <TextField fx:id="idOculto" layoutX="553.0" layoutY="159.0" opacity="0.0" prefHeight="2.0" prefWidth="108.0" />
+      <Button fx:id="cancelar" layoutX="380.0" layoutY="575.0" mnemonicParsing="false" onAction="#cancelar" prefHeight="25.0" prefWidth="77.0" style="-fx-background-color: ORANGE; -fx-background-radius: 20;" text="Cancelar" textFill="WHITE" AnchorPane.bottomAnchor="70.0" />
+      <Text layoutX="101.0" layoutY="535.0" lineSpacing="1.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Para habilitar las Acciones debe dar click a un elemento en la tabla." AnchorPane.leftAnchor="103.0" />
+      <Text layoutX="103.0" layoutY="505.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Info:" wrappingWidth="61.0" AnchorPane.leftAnchor="103.0">
+         <font>
+            <Font size="19.0" />
+         </font>
+      </Text>
    </children>
 </AnchorPane>
