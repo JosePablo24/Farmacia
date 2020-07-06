@@ -123,7 +123,7 @@ public class ProductosController implements Initializable {
     @FXML
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-    	updateInfoTable();
+    	visualizateData();
     }
     
     @FXML
@@ -142,7 +142,46 @@ public class ProductosController implements Initializable {
     }
     @FXML
     private void nuevo(ActionEvent event) {
-    	
+    	Conexion cc = new Conexion();
+        Connection cn = cc.conexion();
+        
+    	if(nuevoNombrePro.getText().equals("") || nuevoDescripcionPro.getText().equals("") || nuevoCantidadPro.getText().equals("") || nuevoIVAPro.getText().equals("") || nuevoPrecioPro.getText().equals("") || nuevoIDProvPro.getText().equals("")){
+            Alert dialogAlert2 = new Alert(Alert.AlertType.WARNING);
+            dialogAlert2.setTitle("Advertencia");
+            dialogAlert2.setContentText("Hay Campos Vacios");
+            dialogAlert2.initStyle(StageStyle.UTILITY);
+            dialogAlert2.showAndWait();
+        }else{
+            String nombre = nuevoNombrePro.getText();
+            String descripcion = nuevoDescripcionPro.getText();
+            String cantidad = nuevoCantidadPro.getText();
+            String iva = nuevoIVAPro.getText();
+            String precio = nuevoPrecioPro.getText();
+            String idProv = nuevoIDProvPro.getText();
+            String query = " INSERT INTO productos (Nombre, Descripcion, Cantidad, iva, Precio_unitario, Proveedores_id)" +" Values (?, ?, ?, ?, ?, ?)";
+            try {
+                PreparedStatement preparedStmt = cn.prepareStatement(query);
+                preparedStmt.setString(1, nombre);
+                preparedStmt.setString(2, descripcion);
+                preparedStmt.setString(3, cantidad);
+                preparedStmt.setString(4, iva);
+                preparedStmt.setString(5, precio);
+                preparedStmt.setString(6, idProv);
+                preparedStmt.execute();
+                cn.close();
+
+                Alert dialogAlert2 = new Alert(Alert.AlertType.CONFIRMATION);
+                dialogAlert2.setTitle("Exito");
+                dialogAlert2.setContentText("Se guardo con exito");
+                dialogAlert2.initStyle(StageStyle.UTILITY);
+                dialogAlert2.showAndWait();
+            } catch (SQLException e) {
+                System.err.println("\nError!... No se pudo realizar la sentencia");
+                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, e);            
+            }finally {
+            	updateInfoTable();
+            }
+        }
     }
 
     @FXML
@@ -174,6 +213,38 @@ public class ProductosController implements Initializable {
             Statement st = cn.createStatement();
             ResultSet rs = st.executeQuery(sql);
             
+            while(rs.next()){
+                //Iterate Row
+                ObservableList<String> row = FXCollections.observableArrayList();
+                for(int i=1 ; i<=rs.getMetaData().getColumnCount(); i++){
+                    //Iterate Column
+                    row.add(rs.getString(i));
+                }
+                System.out.println("Row [1] added "+row );
+                data.add(row);
+            }
+            
+            //verTabla;
+            //TableColumn<String, Person> column1 = new TableColumn<>("Nombre");
+
+            //FINALLY ADDED TO TableView
+            
+            verTabla.setItems(data);
+            verTabla.refresh();
+        } catch (Exception e) {
+
+            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+    
+    private void visualizateData(){
+        String sql = "SELECT * FROM productos";
+        data = FXCollections.observableArrayList();
+        
+        try {
+            Statement st = cn.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            
             for(int i=0 ; i<rs.getMetaData().getColumnCount(); i++){
                 //We are using non property style for making dynamic table
                 final int j = i;                
@@ -186,11 +257,8 @@ public class ProductosController implements Initializable {
                 });
 
                 verTabla.getColumns().addAll(col); 
-                System.out.println("Column ["+i+"] ");
+                //System.out.println("Column ["+i+"] ");
             }
-
-            
-            
             
             while(rs.next()){
                 //Iterate Row
@@ -215,8 +283,6 @@ public class ProductosController implements Initializable {
 
             Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, e);
         }
-        
-        
     }
     
     public void informacion(Person_system person){                
