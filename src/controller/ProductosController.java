@@ -186,6 +186,48 @@ public class ProductosController implements Initializable {
 
     @FXML
     private void editar(ActionEvent event) {
+    	Conexion cc = new Conexion();
+        Connection cn = cc.conexion();
+        
+    	if(editarNombrePro.getText().equals("") || editarDescripcionPro.getText().equals("") || editarCantidadPro.getText().equals("") || editarIVAProv.getText().equals("") || editarPrecioPro.getText().equals("") || editarIDProvePro.getText().equals("")){
+            Alert dialogAlert2 = new Alert(Alert.AlertType.WARNING);
+            dialogAlert2.setTitle("Advertencia");
+            dialogAlert2.setContentText("Hay Campos Vacios");
+            dialogAlert2.initStyle(StageStyle.UTILITY);
+            dialogAlert2.showAndWait();
+        }else{
+        	int id =Integer.parseInt(editarIDProv.getText());
+            String nombre = editarNombrePro.getText();
+            String descripcion = editarDescripcionPro.getText();
+            String cantidad = editarCantidadPro.getText();
+            String iva = editarIVAProv.getText();
+            String precio = editarPrecioPro.getText();
+            String idProv = editarIDProvePro.getText();
+            try {
+            	String query = " UPDATE productos SET Nombre = ?, Descripcion = ?, Cantidad = ?, iva = ?, Precio_unitario = ?, Proveedores_id = ? where id = ?";
+                PreparedStatement preparedStmt = cn.prepareStatement(query);
+                preparedStmt.setString(1, nombre);
+                preparedStmt.setString(2, descripcion);
+                preparedStmt.setString(3, cantidad);
+                preparedStmt.setString(4, iva);
+                preparedStmt.setString(5, precio);
+                preparedStmt.setString(6, idProv);
+                preparedStmt.setInt(7, id);
+                preparedStmt.execute();
+                cn.close();
+
+                Alert dialogAlert2 = new Alert(Alert.AlertType.CONFIRMATION);
+                dialogAlert2.setTitle("Exito");
+                dialogAlert2.setContentText("Se guardo con exito");
+                dialogAlert2.initStyle(StageStyle.UTILITY);
+                dialogAlert2.showAndWait();
+            } catch (SQLException e) {
+                System.err.println("\nError!... No se pudo realizar la sentencia");
+                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, e);            
+            }finally {
+            	updateInfoTable();
+            }
+        }
     }
 
     @FXML
@@ -220,13 +262,10 @@ public class ProductosController implements Initializable {
                     //Iterate Column
                     row.add(rs.getString(i));
                 }
-                System.out.println("Row [1] added "+row );
+                //System.out.println("Row [1] added "+row );
                 data.add(row);
             }
             
-            //verTabla;
-            //TableColumn<String, Person> column1 = new TableColumn<>("Nombre");
-
             //FINALLY ADDED TO TableView
             
             verTabla.setItems(data);
@@ -267,13 +306,10 @@ public class ProductosController implements Initializable {
                     //Iterate Column
                     row.add(rs.getString(i));
                 }
-                System.out.println("Row [1] added "+row );
+                //System.out.println("Row [1] added "+row );
                 data.add(row);
                 
             }
-            
-            //verTabla;
-            //TableColumn<String, Person> column1 = new TableColumn<>("Nombre");
 
             //FINALLY ADDED TO TableView
             
@@ -283,6 +319,24 @@ public class ProductosController implements Initializable {
 
             Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, e);
         }
+        
+        verTabla.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observableValue, Object oldValue, Object newValue) {
+                //Check whether item is selected and set value of selected item to Label
+                if(verTabla.getSelectionModel().getSelectedItem() != null) {    
+                   //System.out.println(newValue);
+                   String []values = newValue.toString().replace("[", "").replace("]", "") .split(",");
+                   editarIDProv.setText(values[0]);
+                   editarNombrePro.setText(values[1]);
+                   editarDescripcionPro.setText(values[2]);
+                   editarCantidadPro.setText(values[3]);
+                   editarIVAProv.setText(values[4]);
+                   editarPrecioPro.setText(values[5]);
+                   editarIDProvePro.setText(values[6]);
+                }
+            }
+        });
     }
     
     public void informacion(Person_system person){                
