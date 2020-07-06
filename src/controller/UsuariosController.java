@@ -391,7 +391,7 @@ public class UsuariosController implements Initializable {
 		cc = new Conexion();
 		cn = cc.conexion();
 		try {
-			String auxUser = user.getUser();
+			String auxUser = person.getUser();
 			Usuarios user = (Usuarios) this.tableUsers.getSelectionModel().getSelectedItem();
 			StringProperty valorUsuario = user.getUsuario();
 			String auxValorUsuario = valorUsuario.get();
