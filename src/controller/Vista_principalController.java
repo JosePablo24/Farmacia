@@ -5,6 +5,7 @@
  */
 package controller;
 
+import far_system.LoginController;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -20,9 +21,11 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import model.Person_system;
+import javafx.scene.image.ImageView;
 /**
  * FXML Controller class
  *
@@ -41,6 +44,7 @@ public class Vista_principalController implements Initializable {
     @FXML    private Button Corte;
     @FXML    private Button Cambio;
     @FXML    private TextField Cambio_caja;
+    @FXML    private ImageView image;
     Person_system person;
     String nombre;
     String rol;
@@ -57,6 +61,7 @@ public class Vista_principalController implements Initializable {
         dialogAlert2.setContentText("Se agrego dinero a la caja");
         dialogAlert2.initStyle(StageStyle.UTILITY);
         dialogAlert2.showAndWait();
+        Cambio_caja.setEditable(false);
     }
 
     @FXML
@@ -136,13 +141,25 @@ public class Vista_principalController implements Initializable {
     }
 
     @FXML
-    void out(ActionEvent event) {
+    void out(ActionEvent event) throws IOException {
+        Stage stage = new Stage();       
         Alert dialogAlert2 = new Alert(Alert.AlertType.WARNING);
         dialogAlert2.setTitle("Advertencia");
         dialogAlert2.setContentText("Esta saliendo de la aplciación");
         dialogAlert2.initStyle(StageStyle.UTILITY);
         dialogAlert2.showAndWait();
-        System.exit(0);
+        FXMLLoader loader= new FXMLLoader(getClass().getResource("/far_system/Login.fxml"));
+            Object carga = loader.load();
+            Parent root = (Parent) carga;
+            Scene scene = new Scene(root);            
+            LoginController controller = loader.<LoginController>getController();            
+            stage.setScene(scene);
+            stage.show();                                                                   
+            Stage stage1 = (Stage) Corte.getScene().getWindow();
+            stage1.close();
+        person.setNombre("");
+        person.setRol("");
+        person.setUser("");
     }
 
     public void informacion(Person_system person){                
@@ -151,7 +168,8 @@ public class Vista_principalController implements Initializable {
         this.rol = person.getRol();
         this.cambio = person.getCambio();
         Name.setText(person.getNombre());
-        Rol.setText(person.getRol());         
+        Rol.setText(person.getRol());
+        image.setImage(new Image("/img/Portada.jpg"));
         if(rol.equals("Admin")){            
         }else{
             Usuarios.setVisible(false);
@@ -159,18 +177,21 @@ public class Vista_principalController implements Initializable {
         if(cambio <= 50){
             Alert dialogAlert2 = new Alert(Alert.AlertType.WARNING);
             dialogAlert2.setTitle("Advertencia");
-            dialogAlert2.setContentText("No hay cambio en la caja");
+            dialogAlert2.setContentText("No hay suficiente cambio en la caja");
             dialogAlert2.initStyle(StageStyle.UTILITY);
             dialogAlert2.showAndWait();
+            Cambio.setDisable(false);
+            Cambio_caja.setEditable(true);
         }else {
             Cambio.setDisable(true);
             Cambio_caja.setText(String.valueOf(cambio));
+            Cambio_caja.setEditable(false);
         }
     }
     
     @FXML
     public void initialize(URL location, ResourceBundle resources) {
-        DateTime.setText(Fecha());
+        DateTime.setText(Fecha());                
     }
      
     public static String Fecha(){
