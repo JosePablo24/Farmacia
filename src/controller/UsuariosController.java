@@ -85,8 +85,8 @@ public class UsuariosController implements Initializable {
 	private PasswordField password;
 
 	@FXML
-	private TextField rol;
-
+	private TextField rol;              
+        
 	@FXML
 	private TableView<Usuarios> tableUsers;
 
@@ -309,7 +309,7 @@ public class UsuariosController implements Initializable {
 	@SuppressWarnings("unchecked")
 	public void mostrarUsuarios() {
 		listaUsuarios.clear();
-		try {
+		try {                                        
 			String sql = "SELECT Login.id, Login.User, Nombre, Apellido_paterno, Apellido_materno, Edad, Sexo, Rol FROM Usuarios INNER JOIN Login ON Usuarios.id = Login.Usuarios_id";
 			Statement st = cn.createStatement();
 			ResultSet rs = st.executeQuery(sql);
@@ -584,9 +584,9 @@ public class UsuariosController implements Initializable {
 		System.out.println(bandData);
 		return bandData;
 	}
-
-	public void informacion(Person_system person) {
-		this.person = person;
-	}
+    
+    public void informacion(Person_system person) {
+        this.person = person;
+    }
 
 }

@@ -5,12 +5,24 @@
  */
 package controller;
 
+import conections.Conexion;
 import far_system.LoginController;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.fxml.FXML;
@@ -20,12 +32,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import model.Person_system;
 import javafx.scene.image.ImageView;
+import javafx.util.Callback;
 /**
  * FXML Controller class
  *
@@ -41,6 +56,7 @@ public class Vista_principalController implements Initializable {
     @FXML    private Button Usuarios;
     @FXML    private Button Provedores;
     @FXML    private Button Ventas;
+    @FXML    private Button reporteVen;
     @FXML    private Button Corte;
     @FXML    private Button Cambio;
     @FXML    private TextField Cambio_caja;
@@ -50,7 +66,10 @@ public class Vista_principalController implements Initializable {
     String rol;
     String user;   
     float cambio;
-    
+    private ObservableList<ObservableList> data;
+    @FXML    private TableView productosMenores;
+    private Conexion cc = new Conexion();
+    private Connection cn= cc.conexion();  
 
     @FXML
     void Cambio(ActionEvent event) {
@@ -67,11 +86,11 @@ public class Vista_principalController implements Initializable {
     @FXML
     void Corte_caja(ActionEvent event) throws IOException {
         Stage stage = new Stage();
-        FXMLLoader loader= new FXMLLoader(getClass().getResource("/view/Usuarios.fxml"));
+        FXMLLoader loader= new FXMLLoader(getClass().getResource("/view/CorteCaja.fxml"));
         Object carga = loader.load();
         Parent root = (Parent) carga;
         Scene scene = new Scene(root);            
-        UsuariosController controller = loader.<UsuariosController>getController();
+        CorteCajaController controller = loader.<CorteCajaController>getController();
         controller.informacion(person);
         stage.setScene(scene);
         stage.show();                                                                   
@@ -103,6 +122,22 @@ public class Vista_principalController implements Initializable {
         Parent root = (Parent) carga;
         Scene scene = new Scene(root);            
         ProveedoresController controller = loader.<ProveedoresController>getController();
+        controller.informacion(person);
+        stage.setScene(scene);
+        stage.show();                                                                   
+        Stage stage1 = (Stage) Corte.getScene().getWindow();
+        stage1.close();
+    }
+    
+    
+    @FXML
+    void Reporte_ventas(ActionEvent event) throws IOException {
+        Stage stage = new Stage();
+        FXMLLoader loader= new FXMLLoader(getClass().getResource("/view/ReportesVenta.fxml"));
+        Object carga = loader.load();
+        Parent root = (Parent) carga;
+        Scene scene = new Scene(root);            
+        ReportesVentaController controller = loader.<ReportesVentaController>getController();
         controller.informacion(person);
         stage.setScene(scene);
         stage.show();                                                                   
@@ -173,6 +208,7 @@ public class Vista_principalController implements Initializable {
         if(rol.equals("Admin")){            
         }else{
             Usuarios.setVisible(false);
+            reporteVen.setVisible(false);
         }
         if(cambio <= 50){
             Alert dialogAlert2 = new Alert(Alert.AlertType.WARNING);
@@ -191,7 +227,8 @@ public class Vista_principalController implements Initializable {
     
     @FXML
     public void initialize(URL location, ResourceBundle resources) {
-        DateTime.setText(Fecha());                
+        DateTime.setText(Fecha());
+        visualizateData();
     }
      
     public static String Fecha(){
@@ -199,5 +236,50 @@ public class Vista_principalController implements Initializable {
          SimpleDateFormat formato = new SimpleDateFormat("dd-MM-YYYY");
          return formato.format(fecha);                  
      }
+    
+        private void visualizateData(){        
+        String sql = "SELECT  id, Nombre, Descripcion, Cantidad,iva,  Precio_unitario FROM productos where productos.Cantidad < '" + 15 + "'";
+        data = FXCollections.observableArrayList();
+         try {
+            Statement st = cn.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+             /**********************************
+             * TABLE COLUMN ADDED DYNAMICALLY *
+             **********************************/
+            for(int i=0 ; i<rs.getMetaData().getColumnCount(); i++){
+                //We are using non property style for making dynamic table
+                final int j = i;
+                TableColumn col = new TableColumn(rs.getMetaData().getColumnName(i+1));                
+                col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList,String>,ObservableValue<String>>(){
+                    public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
+                        return new SimpleStringProperty(param.getValue().get(j).toString());
+                    }
+                });
+                productosMenores.getColumns().addAll(col);
+                System.out.println("Column ["+i+"] ");
+            }            
+            /********************************
+             * Data added to ObservableList *
+             ********************************/            
+            while(rs.next()){
+                //Iterate Row
+                ObservableList<String> row = FXCollections.observableArrayList();
+                for(int i=1 ; i<=rs.getMetaData().getColumnCount(); i++){
+                    //Iterate Column
+                    row.add(rs.getString(i));
+                }
+                System.out.println("Row [1] added "+row );
+                data.add(row);                
+            }
+            //FINALLY ADDED TO TableView            
+            productosMenores.setItems(data);            
+        } catch (SQLException e) {
+            System.err.println("\nError!!!... sentencia no ejecutada");
+            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, e);
+        }
+         
+         
+        
+    }
 }
 

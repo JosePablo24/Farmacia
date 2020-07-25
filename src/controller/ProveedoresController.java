@@ -14,6 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,6 +42,7 @@ import javafx.util.Callback;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TablePosition;
 import javafx.scene.control.TableView.TableViewSelectionModel;
 
@@ -136,11 +138,8 @@ public class ProveedoresController implements Initializable {
 
                 // execute the java preparedstatement
                 preparedStmt.executeUpdate();
-
-                
-                
-                
-                Alert dialogAlert2 = new Alert(Alert.AlertType.CONFIRMATION);
+                                                
+                Alert dialogAlert2 = new Alert(Alert.AlertType.INFORMATION);
                 dialogAlert2.setTitle("Exito");
                 dialogAlert2.setContentText("Se guardo con exito");
                 dialogAlert2.initStyle(StageStyle.UTILITY);
@@ -155,7 +154,8 @@ public class ProveedoresController implements Initializable {
             }
         }
     }
-
+    
+    boolean delete = false;
     @FXML
     void OnMouseClickedEliminar(MouseEvent event) {
         if(verIdProv.getText().equals("") ){
@@ -165,22 +165,29 @@ public class ProveedoresController implements Initializable {
             dialogAlert2.initStyle(StageStyle.UTILITY);
             dialogAlert2.showAndWait();
         }else{
-            int id =Integer.parseInt(verIdProv.getText());
-            
-            try {
+            int id =Integer.parseInt(verIdProv.getText());            
+            Alert dialogAlert2 = new Alert(Alert.AlertType.CONFIRMATION);
+            dialogAlert2.setTitle("Confirmacion");
+            dialogAlert2.setHeaderText(null);
+            dialogAlert2.setContentText("¿Desea eliminar este Proveedor?");
+            dialogAlert2.initStyle(StageStyle.UTILITY);
+            Optional<ButtonType> result = dialogAlert2.showAndWait();
+            if(result.get() == ButtonType.OK){
+                delete = true;                
+            }else{
+            }
+            if(delete == true){
+                try {
                 String query = "DELETE FROM proveedores where id = ?";
                 PreparedStatement preparedStmt = cn.prepareStatement(query);
                 preparedStmt.setInt(1, id);
-                preparedStmt.execute();
-      
+                preparedStmt.execute();                                      
                 
-                
-                
-                Alert dialogAlert2 = new Alert(Alert.AlertType.CONFIRMATION);
-                dialogAlert2.setTitle("Exito");
-                dialogAlert2.setContentText("Se elimino con exito");
-                dialogAlert2.initStyle(StageStyle.UTILITY);
-                dialogAlert2.showAndWait();
+                Alert dialogAlert1 = new Alert(Alert.AlertType.INFORMATION);
+                dialogAlert1.setTitle("Exito");
+                dialogAlert1.setContentText("Se elimino con exito");
+                dialogAlert1.initStyle(StageStyle.UTILITY);
+                dialogAlert1.showAndWait();
                 
             } catch (Exception e) {
                 System.err.println("\nError!... No se pudo realizar la sentencia");
@@ -188,6 +195,7 @@ public class ProveedoresController implements Initializable {
             }finally{
                 updateInfoTable();
             }
+            }            
         }
     }
 
@@ -213,7 +221,7 @@ public class ProveedoresController implements Initializable {
                 
                
                 
-                Alert dialogAlert2 = new Alert(Alert.AlertType.CONFIRMATION);
+                Alert dialogAlert2 = new Alert(Alert.AlertType.INFORMATION);
                 dialogAlert2.setTitle("Exito");
                 dialogAlert2.setContentText("Se guardo con exito");
                 dialogAlert2.initStyle(StageStyle.UTILITY);
