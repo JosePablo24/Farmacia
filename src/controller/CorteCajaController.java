@@ -91,17 +91,39 @@ public class CorteCajaController implements Initializable {
     }
     
      private void generarPdf()throws FileNotFoundException, DocumentException{
-//        File directorio = new File("C:\\pdfs");
-//        if (!directorio.exists()) {
-//            if (directorio.mkdirs()) {
-//                System.out.println("Directorio creado");
-//            } else {
-//                System.out.println("Error al crear directorio");
-//            }
-//        }
-            String fecha = Fecha();
-            String hora = Hora1();            
-            FileOutputStream archivo = new FileOutputStream(new File("C:\\pdfs\\cortes\\corte" + "_" + fecha + "_" +hora + ".pdf"));
+        String sSistemaOperativo = System.getProperty("os.name");
+        System.out.println(sSistemaOperativo);
+        File directorio = null;
+        File directorio1 = null;
+        String fecha = Fecha();
+        String hora = Hora1();            
+        FileOutputStream archivo = null;
+        if(sSistemaOperativo.equals("Windows 10") || sSistemaOperativo.equals("Windows 7") || sSistemaOperativo.equals("Windows 8") || sSistemaOperativo.equals("Windows Xp")){
+            directorio = new File("C:\\pdfs");
+            directorio1 = new File("C:\\pdfs\\cortes");            
+        }else{
+            directorio = new File("/home/pdfs");
+            directorio1 = new File("/home/pdfs/cortes");            
+        }        
+        if (!directorio.exists()) {
+            if (directorio.mkdir()) {
+                System.out.println("Directorio creado");
+            } else {
+                System.out.println("Error al crear directorio");
+            }
+        }        
+        if (!directorio1.exists()) {
+            if (directorio1.mkdir()) {
+                System.out.println("Directorio creado");
+            } else {
+                System.out.println("Error al crear directorio");
+            }
+        }
+        if(sSistemaOperativo.equals("Windows 10") || sSistemaOperativo.equals("Windows 7") || sSistemaOperativo.equals("Windows 8") || sSistemaOperativo.equals("Windows Xp")){
+            archivo = new FileOutputStream(new File("C:\\pdfs\\cortes\\corte" + "_" + fecha + "_" +hora + ".pdf"));
+        }else{
+            archivo = new FileOutputStream(new File("/home/pdfs/cortes/corte" + "_" + fecha + "_" +hora + ".pdf"));
+        }            
             Document docto = new Document();        
             PdfWriter.getInstance(docto, archivo);
             docto.open();
@@ -121,8 +143,15 @@ public class CorteCajaController implements Initializable {
     }
     
     public void abrir(String nombre,String fecha, String hora){
+        File path = null;
+        String sSistemaOperativo = System.getProperty("os.name");
+        System.out.println(sSistemaOperativo);
         try {
-            File path = new File("C:\\pdfs\\cortes\\" + nombre + "_" + fecha + "_" + hora + ".pdf");
+            if(sSistemaOperativo.equals("Windows 10") || sSistemaOperativo.equals("Windows 7") || sSistemaOperativo.equals("Windows 8") || sSistemaOperativo.equals("Windows Xp")){
+                path = new File("C:\\pdfs\\cortes\\" + nombre + "_" + fecha + "_" + hora + ".pdf");
+            }else{
+                path = new File("/home/pdfs/cortes/" + nombre + "_" + fecha + "_" + hora + ".pdf");
+            }            
             Desktop.getDesktop().open(path);
         } catch (IOException ex) {
             Logger.getLogger(VentasController.class.getName()).log(Level.SEVERE, null, ex);

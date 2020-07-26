@@ -8,7 +8,7 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="Far_system.jar" size="323295" download="eager" />
+    <jar href="Far_system.jar" size="324880" download="eager" />
     <jar href="lib\itext-5.0.5.jar" size="1599728" download="eager" />
     <jar href="lib\jfoenix-8.0.4.jar" size="2487326" download="eager" />
     <jar href="lib\mysql-connector-java-5.1.23-bin.jar" size="834126" download="eager" />

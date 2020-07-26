@@ -76,6 +76,7 @@ public class VentasController implements Initializable {
     @FXML    private TextField idVender;
     @FXML    private TextField cambioVenta;
     @FXML    private TextField devoluciónVenta;
+    @FXML    private TextField cantidadProductoVenta;
 
     @FXML    private Button regresar;
     Person_system person;
@@ -106,7 +107,7 @@ public class VentasController implements Initializable {
         if(ventasPro.size() > 0){
              Alert dialogAlert2 = new Alert(Alert.AlertType.CONFIRMATION);
             dialogAlert2.setTitle("Confirmacion");
-            dialogAlert2.setHeaderText(null);
+            dialogAlert2.setHeaderText("Tienes una venta abierta");
             dialogAlert2.setContentText("¿Desea salir?");
             dialogAlert2.initStyle(StageStyle.UTILITY);
             Optional<ButtonType> result = dialogAlert2.showAndWait();
@@ -223,6 +224,7 @@ public class VentasController implements Initializable {
                    productoVender.setText(values[1]);
                    Descripcionvender.setText(values[2]);
                    precioUniVender.setText(values[4]);
+                   cantidadProductoVenta.setText(values[3]);
                 }
             }
         });
@@ -254,6 +256,7 @@ public class VentasController implements Initializable {
                 }else{
                     if(person.getCambio() >= Double.valueOf(cambioVenta.getText())){
                         System.out.println("hols");
+                        float cambio = 0;
                         for (int i = 0; i < ids.size(); i++) {
                             analizarSentencia(ids.get(i), cantidadVendida.get(i));
                         }                    
@@ -263,26 +266,20 @@ public class VentasController implements Initializable {
                             System.out.println(valorCaja);
                             person.setCambio(valorCaja);
                         }else{
-                            float cambio = Float.valueOf(cambioVenta.getText()) - Float.valueOf(total.getText());
+                            cambio = Float.valueOf(cambioVenta.getText()) - Float.valueOf(total.getText());
                             valorCaja -= cambio;
                             valorCaja += Float.valueOf(total.getText());
                             System.out.println(valorCaja);
                             person.setCambio(valorCaja);
                             devoluciónVenta.setText(String.valueOf(cambio));
                         }
-                        generarPdf("farmacia",iva.getText(), subtotal.getText(), total.getText());
+                        generarPdf("farmacia",iva.getText(), subtotal.getText(), total.getText(), cambio);
                         ids.clear();
                         cantidadVendida.clear();
                         iva.setText("");
                         subtotal.setText("");
                         total.setText("");                    
-                        ventasPro.clear();
-                        try {
-                            Thread.sleep(10000);
-                        } catch (InterruptedException ex) {
-                            Logger.getLogger(VentasController.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        refrescar();
+                        ventasPro.clear();                        
                     }else{
                         if(person.getCambio() == 0){
                             TextInputDialog dialogo = new TextInputDialog();
@@ -294,11 +291,13 @@ public class VentasController implements Initializable {
                             response.ifPresent((string)->person.setCambio(Float.valueOf(string)));
 
                         }else{
-                            Alert dialogAlert2 = new Alert(Alert.AlertType.WARNING);
-                            dialogAlert2.setTitle("Advertencia");
-                            dialogAlert2.setContentText("Te quedaste sin cambio hija");
-                            dialogAlert2.initStyle(StageStyle.UTILITY);
-                            dialogAlert2.showAndWait();
+                            TextInputDialog dialogo = new TextInputDialog();
+                            dialogo.setTitle("Mete dinero en la caja");
+                            dialogo.setHeaderText("No tienes el cambio suficiente");
+                            dialogo.setContentText("Introduce dinero en la caja");                           
+                            dialogo.initStyle(StageStyle.UTILITY);
+                            Optional<String> response = dialogo.showAndWait();
+                            response.ifPresent((string)->person.setCambio(Float.valueOf(string) + person.getCambio()));
                         }                    
                     }
                 }
@@ -309,17 +308,35 @@ public class VentasController implements Initializable {
     
     boolean hay = false;
     
-    private void generarPdf(String nombre,String iva, String subtotal, String total)throws FileNotFoundException, DocumentException{
-//        File directorio = new File("C:\\pdfs");
-//        if (!directorio.exists()) {
-//            if (directorio.mkdirs()) {
-//                System.out.println("Directorio creado");
-//            } else {
-//                System.out.println("Error al crear directorio");
-//            }
-//        }
-            String fecha = Fecha();
-            String hora = Hora1();
+    private void generarPdf(String nombre,String iva, String subtotal, String total, float cambio)throws FileNotFoundException, DocumentException, IOException{
+        String sSistemaOperativo = System.getProperty("os.name");
+        System.out.println(sSistemaOperativo);
+        File directorio = null;
+        File directorio1 = null;
+        String fecha = Fecha();
+        String hora = Hora1();            
+        FileOutputStream archivo = null;
+        if(sSistemaOperativo.equals("Windows 10") || sSistemaOperativo.equals("Windows 7") || sSistemaOperativo.equals("Windows 8") || sSistemaOperativo.equals("Windows Xp")){
+            directorio = new File("C:\\pdfs");
+            directorio1 = new File("C:\\pdfs\\tickets");            
+        }else{
+            directorio = new File("/home/pdfs");
+            directorio1 = new File("/home/pdfs/tickets");            
+        }        
+        if (!directorio.exists()) {
+            if (directorio.mkdir()) {
+                System.out.println("Directorio creado");
+            } else {
+                System.out.println("Error al crear directorio");
+            }
+        }        
+        if (!directorio1.exists()) {
+            if (directorio1.mkdir()) {
+                System.out.println("Directorio creado");
+            } else {
+                System.out.println("Error al crear directorio");
+            }
+        }            
             String query = " INSERT INTO ventas (Subtotal, Iva, Total, Hora, Fecha)" +" Values (?, ?, ?, ?, ?)";
             try {
                 PreparedStatement preparedStmt = cn.prepareStatement(query);
@@ -333,7 +350,11 @@ public class VentasController implements Initializable {
                 System.err.println("\nError!... No se pudo realizar la sentencia");
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, e);            
             }
-            FileOutputStream archivo = new FileOutputStream(new File("C:\\pdfs\\tickets\\" + nombre + "_" + fecha + "_" +hora + ".pdf"));
+            if(sSistemaOperativo.equals("Windows 10") || sSistemaOperativo.equals("Windows 7") || sSistemaOperativo.equals("Windows 8") || sSistemaOperativo.equals("Windows Xp")){
+                archivo = new FileOutputStream(new File("C:\\pdfs\\tickets\\farmacia" + "_" + fecha + "_" +hora + ".pdf"));
+            }else{
+                archivo = new FileOutputStream(new File("/home/pdfs/tickets/farmacia" + "_" + fecha + "_" +hora + ".pdf"));
+            } 
             Document docto = new Document();        
             PdfWriter.getInstance(docto, archivo);
             docto.open();
@@ -344,18 +365,33 @@ public class VentasController implements Initializable {
             for (int i = 0; i < ventasPro.size(); i++) {                
                 docto.add(new Paragraph(ventasPro.get(i).getNombreProducto() + "                                     " + ventasPro.get(i).getPrecioUni() + "                                     "  +ventasPro.get(i).getCantidad() + "                                     "  + ventasPro.get(i).getTotal()));
             }
-            docto.add(new Paragraph("\n                     Sub Total:    "+ subtotal));
-            docto.add(new Paragraph("\n                     Iva:          " + iva));
-            docto.add(new Paragraph("\n                     Total:        " + total));
+            docto.add(new Paragraph("\n                     Pago con:    "+ cambioVenta.getText()));
+            docto.add(new Paragraph("\n                  Se devolvio:    "+ String.valueOf(cambio)));
+            docto.add(new Paragraph("\n                    Sub Total:    "+ subtotal));
+            docto.add(new Paragraph("\n                          Iva:    " + iva));
+            docto.add(new Paragraph("\n                        Total:    " + total));
             docto.add(new Paragraph("\n Farmacias el Fenix les agradece su preferencia vuelva pronto"));
             docto.close();           
             //System.out.println(Fecha());
+            try {
+                Thread.sleep(7000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(VentasController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            refrescar();
             this.abrir(nombre,fecha, hora);
     }
     
     public void abrir(String nombre,String fecha, String hora){
+       File path = null;
+        String sSistemaOperativo = System.getProperty("os.name");
+        System.out.println(sSistemaOperativo);
         try {
-            File path = new File("C:\\pdfs\\tickets\\" + nombre + "_" + fecha + "_" + hora + ".pdf");
+            if(sSistemaOperativo.equals("Windows 10") || sSistemaOperativo.equals("Windows 7") || sSistemaOperativo.equals("Windows 8") || sSistemaOperativo.equals("Windows Xp")){
+                path = new File("C:\\pdfs\\tickets\\" + nombre + "_" + fecha + "_" + hora + ".pdf");
+            }else{
+                path = new File("/home/pdfs/tickets/" + nombre + "_" + fecha + "_" + hora + ".pdf");
+            }               
             Desktop.getDesktop().open(path);
         } catch (IOException ex) {
             Logger.getLogger(VentasController.class.getName()).log(Level.SEVERE, null, ex);
@@ -364,15 +400,15 @@ public class VentasController implements Initializable {
         
     private void refrescar() throws IOException{
         Stage stage = new Stage();
-        FXMLLoader loader= new FXMLLoader(getClass().getResource("/view/Ventas.fxml"));
+        FXMLLoader loader= new FXMLLoader(getClass().getResource("/view/Vista_principal.fxml"));
         Object carga = loader.load();
         Parent root = (Parent) carga;
         Scene scene = new Scene(root);            
-        VentasController controller = loader.<VentasController>getController();
+        Vista_principalController controller = loader.<Vista_principalController>getController();
         controller.informacion(person);
         stage.setScene(scene);
         stage.show();                                                                   
-        Stage stage1 = (Stage) productoBuscar.getScene().getWindow();
+        Stage stage1 = (Stage) regresar.getScene().getWindow();
         stage1.close();
     }
         
@@ -452,50 +488,58 @@ public class VentasController implements Initializable {
                 dialogAlert2.setContentText("La cantidad de productos debe ser mayor a " +Integer.parseInt(cantidadVender.getText()) );
                 dialogAlert2.initStyle(StageStyle.UTILITY);
                 dialogAlert2.showAndWait();
-            }else{                
-                ids.add(Integer.parseInt(idVender.getText().replaceAll(" ", "")));
-                cantidadVendida.add(Integer.parseInt(cantidadVender.getText()));
-                System.out.println(Integer.parseInt(cantidadVender.getText()));
-                totales = Integer.parseInt(cantidadVender.getText()) * Integer.parseInt(precioUniVender.getText().replaceAll(" ", ""));
-                if(total.getText().equals("")){
-                    totalGen = totales;
-                }else{
-                    totalGen = Double.valueOf(total.getText()) + totales;
+            }else{
+                if(Integer.parseInt(cantidadVender.getText()) <= Integer.parseInt(cantidadProductoVenta.getText().replaceAll(" ", ""))){
+                    ids.add(Integer.parseInt(idVender.getText().replaceAll(" ", "")));
+                    cantidadVendida.add(Integer.parseInt(cantidadVender.getText()));
+                    System.out.println(Integer.parseInt(cantidadVender.getText()));
+                    totales = Integer.parseInt(cantidadVender.getText()) * Integer.parseInt(precioUniVender.getText().replaceAll(" ", ""));
+                    if(total.getText().equals("")){
+                        totalGen = totales;
+                    }else{
+                        totalGen = Double.valueOf(total.getText()) + totales;
+                    }
+
+                    Venta_productos ventapro = new Venta_productos();
+                    ventapro.setNombreProducto(productoVender.getText());
+                    ventapro.setDescripcion(Descripcionvender.getText());
+                    ventapro.setCantidad(Integer.parseInt(cantidadVender.getText()));                
+                    ventapro.setPrecioUni(Integer.parseInt(precioUniVender.getText().replaceAll(" ", "")));
+                    ventapro.setTotal(totales);
+
+                    ventasPro.add(ventapro);
+
+                    ivaGen = totalGen * .16;
+                    subtotalGen = totalGen - ivaGen;
+                    total.setText(String.valueOf(totalGen));
+                    iva.setText(String.valueOf(ivaGen));
+                    subtotal.setText(String.valueOf(subtotalGen));                
+                    String query = " INSERT INTO historialventas (Nombre, Descripcion, Precio_Unitario, Cantidad, Total, Fecha, Hora)" +" Values (?, ?, ?, ?, ?, ?, ?)";
+                    String fecha = Fecha();
+                    String hora = Hora();
+                try {
+                    PreparedStatement preparedStmt = cn.prepareStatement(query);
+                    preparedStmt.setString (1,productoVender.getText());
+                    preparedStmt.setString (2,Descripcionvender.getText());
+                    preparedStmt.setString(3,precioUniVender.getText());
+                    preparedStmt.setString(4, cantidadVender.getText());
+                    preparedStmt.setString (5, String.valueOf(totales));
+                    preparedStmt.setString(6, fecha);
+                    preparedStmt.setString(7, hora);
+                    preparedStmt.execute();
+                } catch (SQLException e) {
+                    System.err.println("\nError!... No se pudo realizar la sentencia");
+                    Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, e);            
+                }finally{
+                     updateInfoTable();
                 }
-                
-                Venta_productos ventapro = new Venta_productos();
-                ventapro.setNombreProducto(productoVender.getText());
-                ventapro.setDescripcion(Descripcionvender.getText());
-                ventapro.setCantidad(Integer.parseInt(cantidadVender.getText()));                
-                ventapro.setPrecioUni(Integer.parseInt(precioUniVender.getText().replaceAll(" ", "")));
-                ventapro.setTotal(totales);
-                
-                ventasPro.add(ventapro);
-                
-                ivaGen = totalGen * .16;
-                subtotalGen = totalGen - ivaGen;
-                total.setText(String.valueOf(totalGen));
-                iva.setText(String.valueOf(ivaGen));
-                subtotal.setText(String.valueOf(subtotalGen));                
-                String query = " INSERT INTO historialventas (Nombre, Descripcion, Precio_Unitario, Cantidad, Total, Fecha, Hora)" +" Values (?, ?, ?, ?, ?, ?, ?)";
-                String fecha = Fecha();
-                String hora = Hora();
-            try {
-                PreparedStatement preparedStmt = cn.prepareStatement(query);
-                preparedStmt.setString (1,productoVender.getText());
-                preparedStmt.setString (2,Descripcionvender.getText());
-                preparedStmt.setString(3,precioUniVender.getText());
-                preparedStmt.setString(4, cantidadVender.getText());
-                preparedStmt.setString (5, String.valueOf(totales));
-                preparedStmt.setString(6, fecha);
-                preparedStmt.setString(7, hora);
-                preparedStmt.execute();
-            } catch (SQLException e) {
-                System.err.println("\nError!... No se pudo realizar la sentencia");
-                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, e);            
-            }finally{
-                 updateInfoTable();
-            }
+                }else{
+                    Alert dialogAlert2 = new Alert(Alert.AlertType.WARNING);
+                    dialogAlert2.setTitle("Advertencia");
+                    dialogAlert2.setContentText("La cantidad de productos Ingresados es mayor a la que hay en stock ");
+                    dialogAlert2.initStyle(StageStyle.UTILITY);
+                    dialogAlert2.showAndWait();
+                }
             }
         }
         productoVender.setText("");
@@ -503,7 +547,7 @@ public class VentasController implements Initializable {
     }
     
     private void visualizateData(){        
-        String sql = "SELECT id, Nombre, Descripcion, Cantidad, Precio_unitario FROM productos";
+        String sql = "SELECT id, Nombre, Descripcion, Cantidad, Precio_unitario FROM productos WHERE Cantidad >= 1";
         data = FXCollections.observableArrayList();
          try {
             Statement st = cn.createStatement();
@@ -555,6 +599,7 @@ public class VentasController implements Initializable {
                    productoVender.setText(values[1]);
                    Descripcionvender.setText(values[2]);
                    precioUniVender.setText(values[4]);
+                   cantidadProductoVenta.setText(values[3]);
                 }
             }
         });
@@ -652,7 +697,7 @@ public class VentasController implements Initializable {
     }
     
     private void updateInfoTable1(){
-        String sql = "SELECT id, Nombre, Descripcion, Cantidad, Precio_unitario FROM productos";
+        String sql = "SELECT id, Nombre, Descripcion, Cantidad, Precio_unitario FROM productos Cantidad >= 1";
         data = FXCollections.observableArrayList();
         
         try {

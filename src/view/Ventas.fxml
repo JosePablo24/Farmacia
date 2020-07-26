@@ -32,5 +32,6 @@
       <TextField fx:id="idVender" editable="false" layoutX="645.0" layoutY="71.0" prefHeight="25.0" prefWidth="67.0" visible="false" />
       <TextField fx:id="devoluciónVenta" editable="false" layoutX="711.0" layoutY="592.0" prefHeight="25.0" prefWidth="112.0" />
       <Label layoutX="625.0" layoutY="596.0" text="Devolución" />
+      <TextField fx:id="cantidadProductoVenta" editable="false" layoutX="483.0" layoutY="39.0" visible="false" />
    </children>
 </AnchorPane>

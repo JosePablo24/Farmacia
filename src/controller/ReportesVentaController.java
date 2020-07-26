@@ -71,11 +71,6 @@ public class ReportesVentaController implements Initializable {
     @FXML
     private DatePicker fechaFin;
 
-    @FXML
-    private TextField horaIni;
-
-    @FXML
-    private TextField horaFin;
 
     @FXML
     private TableView tablaReporte;
@@ -93,6 +88,7 @@ public class ReportesVentaController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         visualizateData();
+        reporteGen.setDisable(true);
     }    
     public void informacion(Person_system person){                
         this.person = person;
@@ -103,7 +99,8 @@ public class ReportesVentaController implements Initializable {
         String sql = "";
         String query = " Where ";
         boolean largeQuery = false;
-        if(fechaIni.getValue().equals("") && fechaFin.getValue().equals("") && horaIni.getText().equals("") && horaFin.getText().equals("")){
+        reporteGen.setDisable(false);
+        if(fechaIni.getValue().equals("") && fechaFin.getValue().equals("") ){
             sql = "SELECT id, Nombre, Cantidad, Precio_unitario, Total, Fecha, Hora FROM farmacia.historialventas";
         }else{
             if(!fechaIni.getValue().equals("") && !fechaIni.getValue().equals("")){
@@ -118,25 +115,7 @@ public class ReportesVentaController implements Initializable {
                 dialogAlert2.setContentText("Los campos de fecha se deben llenar obligatoriamente");
                 dialogAlert2.initStyle(StageStyle.UTILITY);
                 dialogAlert2.showAndWait();                
-            }
-            if(!horaIni.getText().equals("") && !horaFin.getText().equals("")){
-                if(!largeQuery){
-                    query = " historialventas.hora >= '"+horaIni.getText()+"' ";                
-                    query += " and historialventas.hora <= '"+horaFin.getText()+"' ";
-                }
-                largeQuery = true;
-            }else{
-                if(horaIni.getText().equals("") && horaFin.getText().equals("")){
-                }else{
-                    if(horaIni.getText().equals("") || horaFin.getText().equals("")){
-                        Alert dialogAlert2 = new Alert(Alert.AlertType.WARNING);
-                        dialogAlert2.setTitle("Advertencia");
-                        dialogAlert2.setContentText("Tienes que llegar ambos campos de hora ");
-                        dialogAlert2.initStyle(StageStyle.UTILITY);
-                        dialogAlert2.showAndWait();
-                    }
-                }                
-            }
+            }            
             sql = "SELECT id, Nombre, Cantidad, Precio_unitario, Total, Fecha, Hora FROM farmacia.historialventas" + query;
         }
             System.out.println(sql);
@@ -188,17 +167,39 @@ public class ReportesVentaController implements Initializable {
 
     }
      private void generarPdf()throws FileNotFoundException, DocumentException{
-//        File directorio = new File("C:\\pdfs");
-//        if (!directorio.exists()) {
-//            if (directorio.mkdirs()) {
-//                System.out.println("Directorio creado");
-//            } else {
-//                System.out.println("Error al crear directorio");
-//            }
-//        }
-            String fecha = Fecha();
-            String hora = Hora1();            
-            FileOutputStream archivo = new FileOutputStream(new File("C:\\pdfs\\reportes\\reporte" + "_" + fecha + "_" +hora + ".pdf"));
+        String sSistemaOperativo = System.getProperty("os.name");
+        System.out.println(sSistemaOperativo);
+        File directorio = null;
+        File directorio1 = null;
+        String fecha = Fecha();
+        String hora = Hora1();            
+        FileOutputStream archivo = null;
+        if(sSistemaOperativo.equals("Windows 10") || sSistemaOperativo.equals("Windows 7") || sSistemaOperativo.equals("Windows 8") || sSistemaOperativo.equals("Windows Xp")){
+            directorio = new File("C:\\pdfs");
+            directorio1 = new File("C:\\pdfs\\reportes");            
+        }else{
+            directorio = new File("/home/pdfs");
+            directorio1 = new File("/home/pdfs/reportes");            
+        }        
+        if (!directorio.exists()) {
+            if (directorio.mkdir()) {
+                System.out.println("Directorio creado");
+            } else {
+                System.out.println("Error al crear directorio");
+            }
+        }        
+        if (!directorio1.exists()) {
+            if (directorio1.mkdir()) {
+                System.out.println("Directorio creado");
+            } else {
+                System.out.println("Error al crear directorio");
+            }
+        }
+        if(sSistemaOperativo.equals("Windows 10") || sSistemaOperativo.equals("Windows 7") || sSistemaOperativo.equals("Windows 8") || sSistemaOperativo.equals("Windows Xp")){
+            archivo = new FileOutputStream(new File("C:\\pdfs\\reportes\\reporte" + "_" + fecha + "_" +hora + ".pdf"));
+        }else{
+            archivo = new FileOutputStream(new File("/home/pdfs/reportes/reporte" + "_" + fecha + "_" +hora + ".pdf"));
+        }
             Document docto = new Document();        
             PdfWriter.getInstance(docto, archivo);
             docto.open();
@@ -215,8 +216,15 @@ public class ReportesVentaController implements Initializable {
     }
     
     public void abrir(String nombre,String fecha, String hora){
+        File path = null;
+        String sSistemaOperativo = System.getProperty("os.name");
+        System.out.println(sSistemaOperativo);
         try {
-            File path = new File("C:\\pdfs\\reportes\\" + nombre + "_" + fecha + "_" + hora + ".pdf");
+            if(sSistemaOperativo.equals("Windows 10") || sSistemaOperativo.equals("Windows 7") || sSistemaOperativo.equals("Windows 8") || sSistemaOperativo.equals("Windows Xp")){
+                path = new File("C:\\pdfs\\reportes\\" + nombre + "_" + fecha + "_" + hora + ".pdf");
+            }else{
+                path = new File("/home/pdfs/reportes/" + nombre + "_" + fecha + "_" + hora + ".pdf");
+            }
             Desktop.getDesktop().open(path);
         } catch (IOException ex) {
             Logger.getLogger(VentasController.class.getName()).log(Level.SEVERE, null, ex);
@@ -241,7 +249,7 @@ public class ReportesVentaController implements Initializable {
         controller.informacion(person);
         stage.setScene(scene);
         stage.show();                                                                   
-        Stage stage1 = (Stage) horaIni.getScene().getWindow();
+        Stage stage1 = (Stage) fechaIni.getScene().getWindow();
         stage1.close();
 
     }
