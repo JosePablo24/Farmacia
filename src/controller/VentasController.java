@@ -273,6 +273,21 @@ public class VentasController implements Initializable {
                             person.setCambio(valorCaja);
                             devoluciónVenta.setText(String.valueOf(cambio));
                         }
+                        String query = " INSERT INTO ventas (Subtotal, Iva, Total, Hora, Fecha)" +" Values (?, ?, ?, ?, ?)";
+                        try {
+                            Connection cn= cc.conexion();
+                            
+                            PreparedStatement preparedStmt = cn.prepareStatement(query);
+                            preparedStmt.setString (1,subtotal.getText());
+                            preparedStmt.setString (2,iva.getText());
+                            preparedStmt.setString(3,total.getText());
+                            preparedStmt.setString(4, Hora1());
+                            preparedStmt.setString (5, Fecha());
+                            preparedStmt.execute();
+                        } catch (SQLException e) {
+                            System.err.println("\nError!... No se pudo realizar la sentencia");
+                            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, e);            
+                        }
                         generarPdf("farmacia",iva.getText(), subtotal.getText(), total.getText(), cambio);
                         ids.clear();
                         cantidadVendida.clear();
@@ -336,20 +351,7 @@ public class VentasController implements Initializable {
             } else {
                 System.out.println("Error al crear directorio");
             }
-        }            
-            String query = " INSERT INTO ventas (Subtotal, Iva, Total, Hora, Fecha)" +" Values (?, ?, ?, ?, ?)";
-            try {
-                PreparedStatement preparedStmt = cn.prepareStatement(query);
-                preparedStmt.setString (1,subtotal);
-                preparedStmt.setString (2,iva);
-                preparedStmt.setString(3,total);
-                preparedStmt.setString(4, Hora());
-                preparedStmt.setString (5, Fecha());
-                preparedStmt.execute();
-            } catch (SQLException e) {
-                System.err.println("\nError!... No se pudo realizar la sentencia");
-                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, e);            
-            }
+        }
             if(sSistemaOperativo.equals("Windows 10") || sSistemaOperativo.equals("Windows 7") || sSistemaOperativo.equals("Windows 8") || sSistemaOperativo.equals("Windows Xp")){
                 archivo = new FileOutputStream(new File("C:\\pdfs\\tickets\\farmacia" + "_" + fecha + "_" +hora + ".pdf"));
             }else{

@@ -26,6 +26,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.ResourceBundle;
@@ -93,31 +95,48 @@ public class ReportesVentaController implements Initializable {
     public void informacion(Person_system person){                
         this.person = person;
     }
-    
+    boolean pasa = false;
     @FXML
     void filtrar(ActionEvent event) {
         String sql = "";
         String query = " Where ";
-        boolean largeQuery = false;
-        reporteGen.setDisable(false);
+        boolean largeQuery = false;                
         if(fechaIni.getValue().equals("") && fechaFin.getValue().equals("") ){
             sql = "SELECT id, Nombre, Cantidad, Precio_unitario, Total, Fecha, Hora FROM farmacia.historialventas";
+            pasa = true;
         }else{
-            if(!fechaIni.getValue().equals("") && !fechaIni.getValue().equals("")){
-                if(!largeQuery){
-                    query += " historialventas.fecha >= '"+ fechaIni.getValue()+"'";
-                    query += " and historialventas.fecha <= '"+fechaFin.getValue()+"'";
-                }
-                largeQuery = true;
-            }else{                
+            if((fechaIni.getValue().equals("") && !fechaFin.getValue().equals("")) || !fechaIni.getValue().equals("") && fechaFin.getValue().equals("")){
                 Alert dialogAlert2 = new Alert(Alert.AlertType.WARNING);
                 dialogAlert2.setTitle("Advertencia");
                 dialogAlert2.setContentText("Los campos de fecha se deben llenar obligatoriamente");
                 dialogAlert2.initStyle(StageStyle.UTILITY);
-                dialogAlert2.showAndWait();                
-            }            
-            sql = "SELECT id, Nombre, Cantidad, Precio_unitario, Total, Fecha, Hora FROM farmacia.historialventas" + query;
+                dialogAlert2.showAndWait();
+            }else {
+                if(!fechaIni.getValue().equals("") && !fechaFin.getValue().equals("")){
+                    String[] a1 = fechaFin.getValue().toString().split("-");
+                    String[] b1 = fechaIni.getValue().toString().split("-");
+                    LocalDate a = LocalDate.of(Integer.parseInt(a1[0]), Integer.parseInt(a1[1]), Integer.parseInt(a1[2]));
+                    LocalDate b = LocalDate.of(Integer.parseInt(b1[0]), Integer.parseInt(b1[1]), Integer.parseInt(b1[2]));
+                    if(b.isBefore(a) || b.isEqual(a)){
+                        reporteGen.setDisable(false);
+                        if(!largeQuery){
+                            query += " historialventas.fecha >= '"+ fechaIni.getValue()+"'";
+                            query += " and historialventas.fecha <= '"+fechaFin.getValue()+"'";
+                        }
+                        largeQuery = true;
+                        pasa = true;
+                        sql = "SELECT id, Nombre, Cantidad, Precio_unitario, Total, Fecha, Hora FROM farmacia.historialventas" + query;
+                    }else{
+                        Alert dialogAlert2 = new Alert(Alert.AlertType.WARNING);
+                        dialogAlert2.setTitle("Advertencia");
+                        dialogAlert2.setContentText("La fecha final debe ser mayor o igual a la fecha inicial");
+                        dialogAlert2.initStyle(StageStyle.UTILITY);
+                        dialogAlert2.showAndWait();  
+                    }
+                }
+            }
         }
+        if(pasa){        
             System.out.println(sql);
             data = FXCollections.observableArrayList();
 
@@ -143,6 +162,7 @@ public class ReportesVentaController implements Initializable {
                     ventapro.setCantidad(Integer.parseInt(row.get(2)));
                     ventapro.setPrecioUni(Integer.parseInt(row.get(3)));
                     ventapro.setTotal(Integer.parseInt(row.get(4)));
+                    ventasTot += Integer.parseInt(row.get(4));
                     ventapro.setFecha(row.get(5));
                     ventapro.setHora(row.get(6));
                     productos.add(ventapro);
@@ -158,13 +178,15 @@ public class ReportesVentaController implements Initializable {
                 System.err.println("\nError!!!... sentencia no ejecutada");
                 Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, e);            
             }
-
+        }            
     }
 
     @FXML
     void generarReporte(ActionEvent event) throws FileNotFoundException, DocumentException {
         generarPdf();
-
+        productos.clear();
+        reporteGen.setDisable(true);
+        pasa = false;
     }
      private void generarPdf()throws FileNotFoundException, DocumentException{
         String sSistemaOperativo = System.getProperty("os.name");
@@ -194,7 +216,7 @@ public class ReportesVentaController implements Initializable {
             } else {
                 System.out.println("Error al crear directorio");
             }
-        }
+        }        
         if(sSistemaOperativo.equals("Windows 10") || sSistemaOperativo.equals("Windows 7") || sSistemaOperativo.equals("Windows 8") || sSistemaOperativo.equals("Windows Xp")){
             archivo = new FileOutputStream(new File("C:\\pdfs\\reportes\\reporte" + "_" + fecha + "_" +hora + ".pdf"));
         }else{
@@ -209,10 +231,12 @@ public class ReportesVentaController implements Initializable {
             docto.add(new Paragraph("\nProducto            Precio Unitario                Cantidad               Total           Fecha           Hora"));
             for (int i = 0; i < productos.size(); i++) {                
                 docto.add(new Paragraph(productos.get(i).getNombreProducto() + "                 " + productos.get(i).getPrecioUni() + "                  "  +productos.get(i).getCantidad() + "                 "  + productos.get(i).getTotal() + "          " + productos.get(i).getFecha() + "           " + productos.get(i).getHora()));
-            }            
+            }                        
+            docto.add(new Paragraph("\n Ventas Totales:  " + ventasTot ));
             docto.close();           
             //System.out.println(Fecha());
             this.abrir("reporte",fecha, hora);
+            
     }
     
     public void abrir(String nombre,String fecha, String hora){
@@ -254,6 +278,7 @@ public class ReportesVentaController implements Initializable {
 
     }
     
+    int ventasTot = 0;
      private void visualizateData(){        
         String sql = "SELECT id, Nombre, Cantidad, Precio_unitario, Total, Fecha, Hora FROM farmacia.historialventas";
         data = FXCollections.observableArrayList();
