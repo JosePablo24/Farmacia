@@ -98,6 +98,7 @@ public class ReportesVentaController implements Initializable {
     boolean pasa = false;
     @FXML
     void filtrar(ActionEvent event) {
+        productos.clear();
         String sql = "";
         String query = " Where ";
         boolean largeQuery = false;                

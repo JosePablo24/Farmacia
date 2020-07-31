@@ -249,7 +249,7 @@ public class ProductosController implements Initializable {
             Alert dialogAlert2 = new Alert(Alert.AlertType.CONFIRMATION);
             dialogAlert2.setTitle("Confirmacion");
             dialogAlert2.setHeaderText(null);
-            dialogAlert2.setContentText("¿Desea eliminar este Producto?");
+            dialogAlert2.setContentText("¿Desea eliminar este Proveedor?");
             dialogAlert2.initStyle(StageStyle.UTILITY);
             Optional<ButtonType> result = dialogAlert2.showAndWait();
             if(result.get() == ButtonType.OK){
